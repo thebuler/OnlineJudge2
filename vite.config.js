@@ -12,7 +12,7 @@ const sessionLifetime = 12 * 60 * 60 * 1000;
 const sessions = new Map();
 const aiRequests = new Map();
 let accountWriteQueue = Promise.resolve();
-let tutorEnabled = false;
+let tutorEnabled = true;
 
 async function migrateAccountCsv() {
   const content = await readFile(csvPath, "utf8");
@@ -36,8 +36,8 @@ async function prepareTutorSettings() {
     await chmod(tutorSettingsPath, 0o600);
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
-    await writeFile(tutorSettingsPath, "enabled\nfalse\n", { flag: "wx", mode: 0o600 });
-    tutorEnabled = false;
+    await writeFile(tutorSettingsPath, "enabled\ntrue\n", { flag: "wx", mode: 0o600 });
+    tutorEnabled = true;
   }
 }
 

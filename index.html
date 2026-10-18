@@ -459,7 +459,7 @@
         <section class="view" id="teacherView" aria-labelledby="teacherHeadingTitle">
           <div class="teacher-heading">
             <div><div class="eyebrow">CLASSROOM · 2학년 1반</div><h1 id="teacherHeadingTitle">수업의 흐름을 한눈에</h1><p class="welcome-sub">학생들의 문제 풀이와 제출 결과를 확인해 보세요.</p></div>
-            <div class="tutor-control"><div><strong>AI 튜터 힌트</strong><small id="tutorToggleText">학생에게 힌트를 보여주지 않습니다</small></div><button class="tutor-switch" id="tutorToggle" type="button" role="switch" aria-checked="false" aria-label="AI 튜터 힌트 켜기"></button></div>
+            <div class="tutor-control"><div><strong>AI 튜터 힌트</strong><small id="tutorToggleText">학생에게 개념 힌트를 보여줍니다</small></div><button class="tutor-switch" id="tutorToggle" type="button" role="switch" aria-checked="true" aria-label="AI 튜터 힌트 끄기"></button></div>
           </div>
 
           <section class="teacher-stats" aria-label="학급 요약">
@@ -544,7 +544,7 @@
     let currentUser = null;
     let activeJudgeWorker = null;
     let judgeTimeoutId = null;
-    let tutorEnabled = false;
+    let tutorEnabled = true;
     let tutorVisible = false;
     let tutorRequestSequence = 0;
     let recentTutorAttempt = null;
