@@ -115,6 +115,7 @@
     .hero p { max-width: 480px; margin: 0; color: #c2c4d5; font-size: 13px; line-height: 1.7; }
     .primary-button { display: inline-flex; min-height: 42px; align-items: center; gap: 8px; margin-top: 19px; border: 0; border-radius: 9px; background: #8175ff; padding: 0 15px; color: white; cursor: pointer; font-size: 13px; font-weight: 700; transition: background .18s, transform .18s; }
     .primary-button:hover { transform: translateY(-1px); background: #948bff; }
+    .primary-button:disabled { transform: none; cursor: not-allowed; opacity: .65; }
     .primary-button svg { width: 16px; height: 16px; stroke: currentColor; }
     .hero-art { position: relative; display: grid; place-items: center; min-width: 0; }
     .hero-art::before, .hero-art::after { position: absolute; border: 1px solid #ffffff13; border-radius: 50%; content: ""; }
@@ -215,6 +216,27 @@
     .result-filter { min-height: 31px; border: 1px solid var(--line); border-radius: 7px; background: white; padding: 0 9px; color: #777b91; cursor: pointer; font-size: 10px; }
     .result-filter.active { border-color: #d5d1ff; background: var(--purple-soft); color: var(--purple-dark); font-weight: 700; }
     .teacher-footnote { margin: 13px 0 0; color: #9295a6; font-size: 10px; line-height: 1.6; }
+    .problem-editor { padding: 18px; }
+    .problem-editor .editor-panel-head { min-height: auto; padding: 0 0 17px; }
+    .problem-editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .problem-field { display: grid; min-width: 0; gap: 7px; color: #4b4f64; font-size: 11px; font-weight: 700; }
+    .problem-field input, .problem-field select, .problem-field textarea { width: 100%; min-height: 39px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 9px 10px; color: var(--ink); font-size: 12px; font-weight: 400; }
+    .problem-field textarea { resize: vertical; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .problem-field.full-width { grid-column: 1 / -1; }
+    .visibility-field { grid-template-columns: 1fr auto; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; }
+    .visibility-field input { width: 18px; min-height: 18px; accent-color: var(--purple); }
+    .visibility-field small { grid-column: 1 / -1; color: var(--muted); font-size: 10px; font-weight: 400; }
+    .testcase-editor-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 20px 0 10px; }
+    .testcase-editor-head h3 { margin: 0; font-size: 13px; }
+    .testcase-editor-head p { margin: 4px 0 0; color: var(--muted); font-size: 10px; }
+    .editor-test-cases { display: grid; gap: 9px; }
+    .editor-testcase { border: 1px solid var(--line); border-radius: 9px; padding: 11px; }
+    .editor-testcase-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: #777b91; font-size: 10px; font-weight: 700; }
+    .editor-testcase-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .editor-testcase-fields label { display: grid; gap: 5px; color: #777b91; font-size: 10px; }
+    .editor-testcase-fields textarea { width: 100%; min-height: 54px; resize: vertical; border: 1px solid var(--line); border-radius: 7px; padding: 8px; color: var(--ink); font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .remove-testcase { min-height: 29px; border: 1px solid #f0d7d7; border-radius: 6px; background: #fffafa; padding: 0 8px; color: #a45151; cursor: pointer; font-size: 10px; }
+    .problem-editor-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
     .solve-layout { display: grid; grid-template-columns: minmax(250px, .75fr) minmax(400px, 1.25fr); gap: 17px; align-items: start; }
     .detail-card, .editor-card { overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: white; }
     .detail-card { padding: 23px; }
@@ -329,6 +351,8 @@
       .teacher-result-tools { width: 100%; flex-wrap: wrap; }
       .teacher-result-tools .teacher-search { flex: 1; width: auto; min-width: 125px; }
       .result-filters { flex-wrap: wrap; }
+      .problem-editor-grid, .editor-testcase-fields { grid-template-columns: 1fr; }
+      .problem-field.full-width { grid-column: auto; }
     }
     @media (max-width: 440px) {
       .top-actions { gap: 7px; }
@@ -472,6 +496,7 @@
           <div class="teacher-tabs" role="tablist" aria-label="대시보드 보기">
             <button class="teacher-tab" id="progressTab" role="tab" aria-selected="true" aria-controls="progressPanel" data-teacher-tab="progress">학생 진행 상황</button>
             <button class="teacher-tab" id="resultsTab" role="tab" aria-selected="false" aria-controls="resultsPanel" data-teacher-tab="results">최근 제출 결과</button>
+            <button class="teacher-tab" id="problemsTab" role="tab" aria-selected="false" aria-controls="problemManagementPanel" data-teacher-tab="problems">문제 관리</button>
           </div>
 
           <section class="teacher-panel" id="progressPanel" role="tabpanel" aria-labelledby="progressTab">
@@ -482,6 +507,34 @@
           <section class="teacher-panel" id="resultsPanel" role="tabpanel" aria-labelledby="resultsTab" hidden>
             <div class="teacher-panel-head"><div><h2>최근 제출 결과</h2><p>가장 최근 서버 기록 30건</p></div><div class="teacher-result-tools"><input class="teacher-search" id="resultSearch" type="search" placeholder="학생 또는 문제 검색" aria-label="제출 학생이나 문제 검색"><div class="result-filters" aria-label="제출 결과 필터"><button class="result-filter active" data-result-filter="all">전체</button><button class="result-filter" data-result-filter="pass">통과</button><button class="result-filter" data-result-filter="wrong">오답</button><button class="result-filter" data-result-filter="review">재도전</button></div></div></div>
             <div class="table-scroll"><table class="teacher-table"><thead><tr><th>학생 아이디</th><th>문제</th><th>제출 시각</th><th>결과</th><th>시도</th></tr></thead><tbody id="resultRows"></tbody></table></div>
+          </section>
+
+          <section class="teacher-panel" id="problemManagementPanel" role="tabpanel" aria-labelledby="problemsTab" hidden>
+            <div class="teacher-panel-head"><div><h2>문제 관리</h2><p>문제 본문, 시작 코드, 모범 답안과 테스트 케이스를 관리합니다.</p></div><button class="submit-button" id="addProblemButton" type="button">문제 추가</button></div>
+            <div class="table-scroll"><table class="teacher-table"><thead><tr><th>번호</th><th>문제</th><th>단원</th><th>난이도</th><th>공개 여부</th><th>관리</th></tr></thead><tbody id="managedProblemsRows"></tbody></table></div>
+          </section>
+
+          <section class="teacher-panel problem-editor-panel" id="problemEditorPanel" hidden>
+            <form id="problemEditorForm" class="problem-editor" novalidate>
+              <div class="teacher-panel-head editor-panel-head"><div><h2 id="problemEditorHeading">문제 추가</h2><p>학생에게 공개할 문제 정보와 채점 기준을 입력하세요.</p></div><button class="small-button" id="cancelProblemEdit" type="button">목록으로</button></div>
+              <div class="problem-editor-grid">
+                <label class="problem-field">문제 제목<input id="problemTitle" maxlength="100" required></label>
+                <label class="problem-field">단원<select id="problemTopic"><option>입출력</option><option>조건문</option><option>반복문</option><option>리스트</option></select></label>
+                <label class="problem-field">난이도<select id="problemLevel"><option>쉬움</option><option>보통</option><option>도전</option></select></label>
+                <label class="problem-field visibility-field"><span>학생에게 공개</span><input id="problemVisibility" type="checkbox" checked><small>공개하지 않은 문제는 학생 목록에 나타나지 않습니다.</small></label>
+                <label class="problem-field full-width">문제 본문<textarea id="problemDescription" rows="4" maxlength="4000" required></textarea></label>
+                <label class="problem-field">입력 설명<textarea id="problemInputDescription" rows="3" maxlength="2000" required></textarea></label>
+                <label class="problem-field">출력 설명<textarea id="problemOutputDescription" rows="3" maxlength="2000" required></textarea></label>
+                <label class="problem-field">예제 입력<textarea id="problemSampleInput" rows="2" maxlength="2000" required></textarea></label>
+                <label class="problem-field">예제 출력<textarea id="problemSampleOutput" rows="2" maxlength="2000" required></textarea></label>
+                <label class="problem-field">시작 코드<textarea id="problemStarterCode" rows="6" maxlength="12000" spellcheck="false"></textarea></label>
+                <label class="problem-field">모범 답안 코드<textarea id="problemSolution" rows="6" maxlength="12000" spellcheck="false" required></textarea></label>
+              </div>
+              <div class="testcase-editor-head"><div><h3>테스트 케이스</h3><p>입력값과 정답 출력을 추가하세요.</p></div><button class="small-button" id="addTestCase" type="button">테스트 추가</button></div>
+              <div id="editorTestCases" class="editor-test-cases"></div>
+              <p class="login-error" id="problemEditorError" role="alert" hidden></p>
+              <div class="problem-editor-actions"><button class="small-button" id="cancelProblemEditBottom" type="button">취소</button><button class="submit-button" id="saveProblem" type="submit">문제 저장</button></div>
+            </form>
           </section>
           <p class="teacher-footnote">학생 목록은 CSV 계정에서, 제출 결과는 서버 제출 기록에서 불러옵니다. 대시보드는 15초마다 새로고침됩니다.</p>
         </section>
@@ -519,23 +572,20 @@
   <div class="notice" id="notice" role="status" aria-live="polite"></div>
 
   <script>
-    const problems = [
-      { id: "101", number: "PY-001", title: "두 수의 합 구하기", topic: "입출력", level: "쉬움", rate: "82%", description: "두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.", input: "3 5", output: "8", hint: "입력된 두 값을 정수로 바꾸고, 더한 결과를 출력하는 순서를 생각해 보세요.", solution: "a, b = map(int, input().split())\nprint(a + b)", testCases: [{ input: "3 5", expected: "8" }, { input: "-4 10", expected: "6" }, { input: "0 0", expected: "0" }] },
-      { id: "102", number: "PY-002", title: "짝수일까요?", topic: "조건문", level: "쉬움", rate: "76%", description: "정수 N이 주어집니다. N이 짝수이면 '짝수', 홀수이면 '홀수'를 출력해 주세요.", input: "7", output: "홀수", hint: "어떤 수를 2로 나눈 나머지가 0이면 어떤 수일까요?", solution: "n = int(input())\nif n % 2 == 0:\n    print(\"짝수\")\nelse:\n    print(\"홀수\")", testCases: [{ input: "7", expected: "홀수" }, { input: "-4", expected: "짝수" }, { input: "0", expected: "짝수" }] },
-      { id: "103", number: "PY-003", title: "별 계단 만들기", topic: "반복문", level: "보통", rate: "64%", description: "정수 N이 주어집니다. 첫째 줄부터 N번째 줄까지 별을 하나씩 늘려 출력해 주세요.", input: "4", output: "*\n**\n***\n****", hint: "줄 번호가 바뀔 때마다 별의 개수도 어떻게 달라지는지 살펴보세요.", solution: "n = int(input())\nfor i in range(1, n + 1):\n    print(\"*\" * i)", testCases: [{ input: "1", expected: "*" }, { input: "3", expected: "*\n**\n***" }, { input: "4", expected: "*\n**\n***\n****" }] },
-      { id: "104", number: "PY-004", title: "가장 큰 수 찾기", topic: "리스트", level: "보통", rate: "58%", description: "세 정수가 주어집니다. 이 중 가장 큰 수를 출력해 주세요.", input: "4 9 2", output: "9", hint: "파이썬에서 여러 값 중 가장 큰 값을 구하는 방법을 떠올려 보세요.", solution: "numbers = list(map(int, input().split()))\nprint(max(numbers))", testCases: [{ input: "4 9 2", expected: "9" }, { input: "-5 -1 -3", expected: "-1" }, { input: "8 8 2", expected: "8" }] },
-      { id: "105", number: "PY-005", title: "구구단 한 단 출력하기", topic: "반복문", level: "도전", rate: "41%", description: "정수 N이 주어집니다. N단의 결과를 1부터 9까지 한 줄씩 출력해 주세요.", input: "3", output: "3 x 1 = 3\n3 x 2 = 6\n...", hint: "곱하는 수가 1부터 9까지 바뀌는 반복을 만들 수 있을까요?", solution: "n = int(input())\nfor i in range(1, 10):\n    print(f\"{n} x {i} = {n * i}\")", testCases: [{ input: "2", expected: "2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18" }, { input: "3", expected: "3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15\n3 x 6 = 18\n3 x 7 = 21\n3 x 8 = 24\n3 x 9 = 27" }] }
-    ];
-    const baseProblemCount = problems.length;
+    const problems = [];
+    let baseProblemCount = 0;
     const starterCode = "# 두 정수를 입력받아 합을 출력해 보세요.\n\n";
     let activeFilter = "all";
-    let currentProblem = problems[0];
+    let currentProblem = null;
     let currentUser = null;
     let activeJudgeWorker = null;
     let judgeTimeoutId = null;
     let teacherRefreshTimer = null;
     let teacherDashboardLoading = false;
     let teacherDashboardRequest = 0;
+    let managedProblems = [];
+    let editingProblemId = null;
+    let studentCatalogueRequest = 0;
     let tutorEnabled = true;
     let tutorVisible = false;
     let tutorRequestSequence = 0;
@@ -581,6 +631,26 @@
       }
     }
 
+    async function refreshStudentProblemCatalogue(studentId = currentUser?.id) {
+      if (!studentId || currentUser?.app_metadata?.role !== "student") return;
+      const requestId = ++studentCatalogueRequest;
+      try {
+        const response = await fetch("/api/problems", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (requestId !== studentCatalogueRequest || currentUser?.id !== studentId) return;
+        const publicProblems = Array.isArray(data.problems) ? data.problems : [];
+        problems.splice(0, problems.length, ...publicProblems);
+        baseProblemCount = problems.length;
+        restoreGeneratedProblems(studentId);
+        solvedProblemIds = loadSolvedProblems(studentId);
+        renderProblems();
+        renderLearningSummary();
+      } catch {
+        return;
+      }
+    }
+
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[character]);
     }
@@ -621,10 +691,20 @@
       $("#solvedStat").textContent = solvedCount;
       $("#solvedTotal").textContent = `/ ${problems.length}문제`;
       $("#remainingStat").textContent = unsolved.length;
+      if (!problems.length) {
+        $("#nextTopicStat").textContent = "대기";
+        $("#continueTitle").textContent = "아직 공개된 문제가 없어요.";
+        $("#continueDescription").textContent = "선생님이 문제를 공개하면 여기에 표시됩니다.";
+        $("#continueButton").disabled = true;
+        $("#continueButton").dataset.solve = "";
+        $("#continueButton").firstChild.textContent = "문제 준비 중 ";
+        return;
+      }
       $("#nextTopicStat").textContent = next?.topic || "완료";
       $("#continueTitle").textContent = next?.title || "모든 문제를 해결했어요!";
       $("#continueDescription").textContent = next?.description || "푼 문제를 다시 풀어보거나, 전체 문제에서 복습할 문제를 골라보세요.";
       $("#continueButton").dataset.solve = next?.id || problems[0].id;
+      $("#continueButton").disabled = false;
       $("#continueButton").firstChild.textContent = next ? "문제 풀기 " : "다시 풀어보기 ";
     }
 
@@ -651,8 +731,10 @@
       teacherRefreshTimer = null;
       if (viewName === "teacher") {
         loadTeacherDashboard();
+        loadTeacherProblems();
         teacherRefreshTimer = setInterval(loadTeacherDashboard, 15000);
       }
+      if (viewName === "home" || viewName === "problems") refreshStudentProblemCatalogue();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -852,6 +934,200 @@
         });
     }
 
+    function renderTeacherProblems() {
+      const rows = managedProblems.map(problem => {
+        const row = document.createElement("tr");
+        const number = document.createElement("td");
+        number.textContent = problem.number;
+        row.append(number);
+        const title = document.createElement("td");
+        title.textContent = problem.title;
+        row.append(title);
+        appendCell(row, problem.topic);
+        appendCell(row, problem.level);
+        const visibilityCell = document.createElement("td");
+        const visibility = document.createElement("span");
+        visibility.className = `table-status ${problem.isPublished ? "" : "review"}`;
+        visibility.textContent = problem.isPublished ? "공개" : "비공개";
+        visibilityCell.append(visibility);
+        row.append(visibilityCell);
+        const actionsCell = document.createElement("td");
+        const actions = document.createElement("div");
+        actions.className = "problem-row-actions";
+        const edit = document.createElement("button");
+        edit.className = "small-button";
+        edit.type = "button";
+        edit.dataset.problemAction = "edit";
+        edit.dataset.problemId = problem.id;
+        edit.textContent = "수정";
+        const visibilityToggle = document.createElement("button");
+        visibilityToggle.className = "small-button";
+        visibilityToggle.type = "button";
+        visibilityToggle.dataset.problemAction = "visibility";
+        visibilityToggle.dataset.problemId = problem.id;
+        visibilityToggle.textContent = problem.isPublished ? "비공개로" : "공개하기";
+        const remove = document.createElement("button");
+        remove.className = "remove-testcase";
+        remove.type = "button";
+        remove.dataset.problemAction = "delete";
+        remove.dataset.problemId = problem.id;
+        remove.textContent = "삭제";
+        actions.append(edit, visibilityToggle, remove);
+        actionsCell.append(actions);
+        row.append(actionsCell);
+        return row;
+      });
+      if (!rows.length) {
+        const row = document.createElement("tr");
+        const cell = appendCell(row, "등록한 문제가 없습니다.");
+        cell.colSpan = 6;
+        rows.push(row);
+      }
+      $("#managedProblemsRows").replaceChildren(...rows);
+    }
+
+    async function loadTeacherProblems() {
+      if (currentUser?.app_metadata?.role !== "teacher") return;
+      try {
+        const response = await fetch("/api/teacher/problems", { credentials: "same-origin", cache: "no-store" });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "문제 목록을 불러오지 못했습니다.");
+        managedProblems = result.problems;
+        renderTeacherProblems();
+      } catch (error) {
+        toast(error.message || "문제 목록을 불러오지 못했습니다.");
+      }
+    }
+
+    function addTestCaseEditorRow(input = "", expected = "") {
+      const row = document.createElement("div");
+      row.className = "editor-testcase";
+      const top = document.createElement("div");
+      top.className = "editor-testcase-top";
+      const label = document.createElement("span");
+      label.textContent = `테스트 케이스 ${$$(".editor-testcase", $("#editorTestCases")).length + 1}`;
+      const remove = document.createElement("button");
+      remove.className = "remove-testcase";
+      remove.type = "button";
+      remove.textContent = "삭제";
+      remove.addEventListener("click", () => {
+        row.remove();
+        $$(".editor-testcase-top span", $("#editorTestCases")).forEach((item, index) => { item.textContent = `테스트 케이스 ${index + 1}`; });
+      });
+      top.append(label, remove);
+      const fields = document.createElement("div");
+      fields.className = "editor-testcase-fields";
+      const inputLabel = document.createElement("label");
+      inputLabel.textContent = "입력값";
+      const inputArea = document.createElement("textarea");
+      inputArea.dataset.caseInput = "true";
+      inputArea.value = input;
+      inputArea.setAttribute("aria-label", "테스트 케이스 입력값");
+      inputLabel.append(inputArea);
+      const outputLabel = document.createElement("label");
+      outputLabel.textContent = "기대 출력";
+      const outputArea = document.createElement("textarea");
+      outputArea.dataset.caseExpected = "true";
+      outputArea.value = expected;
+      outputArea.setAttribute("aria-label", "테스트 케이스 기대 출력");
+      outputLabel.append(outputArea);
+      fields.append(inputLabel, outputLabel);
+      row.append(top, fields);
+      $("#editorTestCases").append(row);
+    }
+
+    function openProblemEditor(problem = null) {
+      editingProblemId = problem?.id || null;
+      $("#problemEditorForm").reset();
+      $("#problemId").value = editingProblemId || "";
+      $("#problemEditorHeading").textContent = problem ? "문제 수정" : "문제 추가";
+      $("#problemTitle").value = problem?.title || "";
+      $("#problemTopic").value = problem?.topic || "입출력";
+      $("#problemLevel").value = problem?.level || "쉬움";
+      $("#problemVisibility").checked = problem?.isPublished ?? true;
+      $("#problemDescription").value = problem?.description || "";
+      $("#problemInputDescription").value = problem?.inputDescription || "";
+      $("#problemOutputDescription").value = problem?.outputDescription || "";
+      $("#problemSampleInput").value = problem?.input || "";
+      $("#problemSampleOutput").value = problem?.output || "";
+      $("#problemStarterCode").value = problem?.starterCode || "";
+      $("#problemSolution").value = problem?.solution || "";
+      $("#editorTestCases").replaceChildren();
+      (problem?.testCases?.length ? problem.testCases : [{ input: "", expected: "" }, { input: "", expected: "" }]).forEach(testCase => addTestCaseEditorRow(testCase.input, testCase.expected));
+      $("#problemEditorError").hidden = true;
+      $("#problemManagementPanel").hidden = true;
+      $("#problemEditorPanel").hidden = false;
+      $("#problemTitle").focus();
+    }
+
+    async function saveManagedProblem(event) {
+      event.preventDefault();
+      const problemId = $("#problemId").value;
+      const testCases = $$(".editor-testcase", $("#editorTestCases")).map(row => ({
+        input: $("[data-case-input]", row).value,
+        expected: $("[data-case-expected]", row).value
+      }));
+      const body = {
+        title: $("#problemTitle").value,
+        topic: $("#problemTopic").value,
+        level: $("#problemLevel").value,
+        isPublished: $("#problemVisibility").checked,
+        description: $("#problemDescription").value,
+        inputDescription: $("#problemInputDescription").value,
+        outputDescription: $("#problemOutputDescription").value,
+        input: $("#problemSampleInput").value,
+        output: $("#problemSampleOutput").value,
+        starterCode: $("#problemStarterCode").value,
+        solution: $("#problemSolution").value,
+        testCases
+      };
+      const button = $("#saveProblem");
+      const error = $("#problemEditorError");
+      button.disabled = true;
+      error.hidden = true;
+      try {
+        const response = await fetch(problemId ? `/api/teacher/problems/${encodeURIComponent(problemId)}` : "/api/teacher/problems", {
+          method: problemId ? "PUT" : "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "문제를 저장하지 못했습니다.");
+        $("#problemEditorPanel").hidden = true;
+        $("#problemManagementPanel").hidden = false;
+        await loadTeacherProblems();
+        toast(problemId ? "문제를 수정했어요." : "문제를 추가했어요.");
+      } catch (saveError) {
+        error.textContent = saveError.message || "문제를 저장하지 못했습니다.";
+        error.hidden = false;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function manageProblem(action, problemId) {
+      const problem = managedProblems.find(item => item.id === problemId);
+      if (!problem) return;
+      if (action === "edit") return openProblemEditor(problem);
+      if (action === "delete" && !window.confirm(`'${problem.title}' 문제를 삭제할까요?`)) return;
+      const method = action === "delete" ? "DELETE" : "PATCH";
+      const response = await fetch(`/api/teacher/problems/${encodeURIComponent(problemId)}`, {
+        method,
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: action === "visibility" ? JSON.stringify({ isPublished: !problem.isPublished }) : undefined
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        toast(result.error || "문제를 변경하지 못했어요.");
+        return;
+      }
+      managedProblems = result.problems;
+      renderTeacherProblems();
+      toast(action === "delete" ? "문제를 삭제했어요." : action === "visibility" ? "공개 여부를 변경했어요." : "문제를 수정했어요.");
+    }
+
     function openProblem(id) {
       currentProblem = problems.find(problem => problem.id === id) || problems[0];
       tutorVisible = tutorEnabled;
@@ -877,7 +1153,7 @@
       $("#answerCode").textContent = currentProblem.solution || "이 맞춤 문제에는 모범 답안이 제공되지 않습니다.";
       $(".answer-menu").hidden = Boolean(currentProblem.isGenerated);
       $(".answer-menu").open = false;
-      $("#codeInput").value = localStorage.getItem(codeStorageKey(id)) ?? starterCode;
+      $("#codeInput").value = localStorage.getItem(codeStorageKey(id)) ?? currentProblem.starterCode ?? starterCode;
       $("#resultPanel").classList.remove("show");
       showView("solve");
       updateLineNumbers();
@@ -1155,11 +1431,20 @@
       }
       const teacherTab = event.target.closest("[data-teacher-tab]");
       if (teacherTab) {
-        const showResults = teacherTab.dataset.teacherTab === "results";
-        $("#progressTab").setAttribute("aria-selected", String(!showResults));
-        $("#resultsTab").setAttribute("aria-selected", String(showResults));
-        $("#progressPanel").hidden = showResults;
-        $("#resultsPanel").hidden = !showResults;
+        const selected = teacherTab.dataset.teacherTab;
+        $("#progressTab").setAttribute("aria-selected", String(selected === "progress"));
+        $("#resultsTab").setAttribute("aria-selected", String(selected === "results"));
+        $("#problemsTab").setAttribute("aria-selected", String(selected === "problems"));
+        $("#progressPanel").hidden = selected !== "progress";
+        $("#resultsPanel").hidden = selected !== "results";
+        $("#problemManagementPanel").hidden = selected !== "problems";
+        $("#problemEditorPanel").hidden = true;
+        if (selected === "problems") loadTeacherProblems();
+        return;
+      }
+      const problemAction = event.target.closest("[data-problem-action]");
+      if (problemAction) {
+        manageProblem(problemAction.dataset.problemAction, problemAction.dataset.problemId);
         return;
       }
       const resultFilter = event.target.closest("[data-result-filter]");
@@ -1274,6 +1559,23 @@
     $("#teacherSearch").addEventListener("input", filterTeacherRows);
     $("#resultSearch").addEventListener("input", filterTeacherRows);
     $("#refreshTeacher").addEventListener("click", loadTeacherDashboard);
+    $("#addProblemButton").addEventListener("click", () => openProblemEditor());
+    $("#cancelProblemEdit").addEventListener("click", () => {
+      $("#problemEditorPanel").hidden = true;
+      $("#problemManagementPanel").hidden = false;
+    });
+    $("#cancelProblemEditBottom").addEventListener("click", () => {
+      $("#problemEditorPanel").hidden = true;
+      $("#problemManagementPanel").hidden = false;
+    });
+    $("#addTestCase").addEventListener("click", () => {
+      if ($$(".editor-testcase", $("#editorTestCases")).length >= 10) {
+        toast("문제 하나에 테스트 케이스를 최대 10개까지 추가할 수 있어요.");
+        return;
+      }
+      addTestCaseEditorRow();
+    });
+    $("#problemEditorForm").addEventListener("submit", saveManagedProblem);
     $("#tutorToggle").addEventListener("click", async () => {
       const toggle = $("#tutorToggle");
       toggle.disabled = true;

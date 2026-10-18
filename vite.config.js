@@ -1,4 +1,4 @@
-import { createHash, randomBytes, pbkdf2, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, randomUUID, pbkdf2, timingSafeEqual } from "node:crypto";
 import { appendFile, chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,8 +8,16 @@ const csvPath = fileURLToPath(new URL("./.private/students.csv", import.meta.url
 const legacyCsvPath = fileURLToPath(new URL("./data/students.csv", import.meta.url));
 const tutorSettingsPath = fileURLToPath(new URL("./.private/tutor-settings.csv", import.meta.url));
 const submissionsPath = fileURLToPath(new URL("./.private/submissions.csv", import.meta.url));
+const problemStorePath = fileURLToPath(new URL("./.private/problems.json", import.meta.url));
 const csvHeader = "id,salt,password_hash,role,created_at\n";
 const submissionsHeader = "student_id,problem_id,title,topic,level,status,passed,total,submitted_at\n";
+const defaultProblems = [
+  { id: "101", number: "PY-001", title: "두 수의 합 구하기", topic: "입출력", level: "쉬움", rate: "82%", description: "두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.", input: "3 5", output: "8", inputDescription: "첫째 줄에 두 정수 A와 B가 공백으로 구분되어 주어집니다.", outputDescription: "두 정수 A와 B의 합을 출력합니다.", starterCode: "# 두 정수를 입력받아 합을 출력해 보세요.\n", hint: "입력된 두 값을 정수로 바꾸고, 더한 결과를 출력하는 순서를 생각해 보세요.", solution: "a, b = map(int, input().split())\nprint(a + b)", testCases: [{ input: "3 5", expected: "8" }, { input: "-4 10", expected: "6" }, { input: "0 0", expected: "0" }], isPublished: true },
+  { id: "102", number: "PY-002", title: "짝수일까요?", topic: "조건문", level: "쉬움", rate: "76%", description: "정수 N이 주어집니다. N이 짝수이면 '짝수', 홀수이면 '홀수'를 출력해 주세요.", input: "7", output: "홀수", inputDescription: "첫째 줄에 정수 N이 주어집니다.", outputDescription: "N이 짝수이면 '짝수', 홀수이면 '홀수'를 출력합니다.", starterCode: "# 정수 N을 입력받아 짝수인지 확인해 보세요.\n", hint: "어떤 수를 2로 나눈 나머지가 0이면 어떤 수일까요?", solution: "n = int(input())\nif n % 2 == 0:\n    print(\"짝수\")\nelse:\n    print(\"홀수\")", testCases: [{ input: "7", expected: "홀수" }, { input: "-4", expected: "짝수" }, { input: "0", expected: "짝수" }], isPublished: true },
+  { id: "103", number: "PY-003", title: "별 계단 만들기", topic: "반복문", level: "보통", rate: "64%", description: "정수 N이 주어집니다. 첫째 줄부터 N번째 줄까지 별을 하나씩 늘려 출력해 주세요.", input: "4", output: "*\n**\n***\n****", inputDescription: "첫째 줄에 정수 N이 주어집니다.", outputDescription: "1개부터 N개까지 별을 한 줄씩 출력합니다.", starterCode: "# 정수 N을 입력받아 별 계단을 출력해 보세요.\n", hint: "줄 번호가 바뀔 때마다 별의 개수도 어떻게 달라지는지 살펴보세요.", solution: "n = int(input())\nfor i in range(1, n + 1):\n    print(\"*\" * i)", testCases: [{ input: "1", expected: "*" }, { input: "3", expected: "*\n**\n***" }, { input: "4", expected: "*\n**\n***\n****" }], isPublished: true },
+  { id: "104", number: "PY-004", title: "가장 큰 수 찾기", topic: "리스트", level: "보통", rate: "58%", description: "세 정수가 주어집니다. 이 중 가장 큰 수를 출력해 주세요.", input: "4 9 2", output: "9", inputDescription: "첫째 줄에 세 정수가 공백으로 구분되어 주어집니다.", outputDescription: "세 정수 중 가장 큰 수를 출력합니다.", starterCode: "# 세 정수를 입력받아 가장 큰 수를 찾아보세요.\n", hint: "파이썬에서 여러 값 중 가장 큰 값을 구하는 방법을 떠올려 보세요.", solution: "numbers = list(map(int, input().split()))\nprint(max(numbers))", testCases: [{ input: "4 9 2", expected: "9" }, { input: "-5 -1 -3", expected: "-1" }, { input: "8 8 2", expected: "8" }], isPublished: true },
+  { id: "105", number: "PY-005", title: "구구단 한 단 출력하기", topic: "반복문", level: "도전", rate: "41%", description: "정수 N이 주어집니다. N단의 결과를 1부터 9까지 한 줄씩 출력해 주세요.", input: "3", output: "3 x 1 = 3\n3 x 2 = 6\n...", inputDescription: "첫째 줄에 정수 N이 주어집니다.", outputDescription: "N단의 구구단을 1부터 9까지 출력합니다.", starterCode: "# 정수 N을 입력받아 구구단 한 단을 출력해 보세요.\n", hint: "곱하는 수가 1부터 9까지 바뀌는 반복을 만들 수 있을까요?", solution: "n = int(input())\nfor i in range(1, 10):\n    print(f\"{n} x {i} = {n * i}\")", testCases: [{ input: "2", expected: "2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18" }, { input: "3", expected: "3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15\n3 x 6 = 18\n3 x 7 = 21\n3 x 8 = 24\n3 x 9 = 27" }], isPublished: true }
+];
 const sessionLifetime = 12 * 60 * 60 * 1000;
 const sessions = new Map();
 const aiRequests = new Map();
@@ -240,6 +248,55 @@ async function prepareSubmissionStorage() {
   }
 }
 
+async function prepareProblemStorage() {
+  try {
+    const content = await readFile(problemStorePath, "utf8");
+    if (!Array.isArray(JSON.parse(content))) throw new Error("문제 저장 파일 형식이 올바르지 않습니다.");
+    await chmod(problemStorePath, 0o600);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    await writeFile(problemStorePath, JSON.stringify(defaultProblems, null, 2), { flag: "wx", mode: 0o600 });
+  }
+}
+
+async function readProblems() {
+  return JSON.parse(await readFile(problemStorePath, "utf8"));
+}
+
+async function saveProblems(problems) {
+  const tempPath = `${problemStorePath}.tmp`;
+  await writeFile(tempPath, JSON.stringify(problems, null, 2), { mode: 0o600 });
+  await rename(tempPath, problemStorePath);
+  await chmod(problemStorePath, 0o600);
+}
+
+function validateProblemInput(body) {
+  const topics = ["입출력", "조건문", "반복문", "리스트"];
+  const levels = ["쉬움", "보통", "도전"];
+  const requiredText = ["title", "description", "inputDescription", "outputDescription", "input", "output"];
+  if (!body || typeof body !== "object" || !topics.includes(body.topic) || !levels.includes(body.level)) return null;
+  if (requiredText.some(field => typeof body[field] !== "string" || !body[field].trim() || body[field].length > 4000)) return null;
+  if (typeof body.starterCode !== "string" || body.starterCode.length > 12000) return null;
+  if (typeof body.solution !== "string" || !body.solution.trim() || body.solution.length > 12000) return null;
+  if (!Array.isArray(body.testCases) || body.testCases.length < 2 || body.testCases.length > 10) return null;
+  if (body.testCases.some(testCase => !testCase || typeof testCase.input !== "string" || typeof testCase.expected !== "string" || testCase.input.length > 4000 || testCase.expected.length > 4000)) return null;
+  return {
+    title: body.title.trim().slice(0, 100),
+    topic: body.topic,
+    level: body.level,
+    rate: typeof body.rate === "string" ? csvField(body.rate, 20) : "신규",
+    description: body.description.trim(),
+    inputDescription: body.inputDescription.trim(),
+    outputDescription: body.outputDescription.trim(),
+    input: body.input,
+    output: body.output,
+    starterCode: body.starterCode,
+    solution: body.solution,
+    testCases: body.testCases.map(testCase => ({ input: testCase.input, expected: testCase.expected })),
+    isPublished: Boolean(body.isPublished)
+  };
+}
+
 async function readSubmissions() {
   try {
     return (await readFile(submissionsPath, "utf8")).split(/\r?\n/).slice(1).filter(Boolean).map(line => {
@@ -264,7 +321,7 @@ function serializeSubmissionWrite(operation) {
 }
 
 async function buildTeacherDashboard() {
-  const [accounts, submissions] = await Promise.all([readAccounts(), readSubmissions()]);
+  const [accounts, submissions, problemStore] = await Promise.all([readAccounts(), readSubmissions(), readProblems()]);
   const students = accounts.filter(account => account.role === "student");
   const byStudent = new Map(students.map(student => [student.id, []]));
   for (const submission of submissions) byStudent.get(submission.studentId)?.push(submission);
@@ -272,13 +329,13 @@ async function buildTeacherDashboard() {
   const studentRows = students.map(student => {
     const records = (byStudent.get(student.id) || []).sort((left, right) => right.submittedAt.localeCompare(left.submittedAt));
     const solvedCount = new Set(records.filter(item => item.status === "accepted").map(item => item.problemId)).size;
-    const totalProblems = 5 + new Set(records.filter(item => item.problemId.startsWith("ai-")).map(item => item.problemId)).size;
+    const totalProblems = problemStore.filter(problem => problem.isPublished).length + new Set(records.filter(item => item.problemId.startsWith("ai-")).map(item => item.problemId)).size;
     const latest = records[0];
     return {
       id: student.id,
       solvedCount,
       totalProblems,
-      progress: Math.min(100, Math.round(solvedCount / totalProblems * 100)),
+      progress: totalProblems ? Math.min(100, Math.round(solvedCount / totalProblems * 100)) : 0,
       lastActive: latest?.submittedAt || null,
       currentTopic: latest?.topic || "미시작",
       status: !latest ? "미시작" : latest.status === "accepted" ? "순조로움" : "도움 필요"
@@ -378,6 +435,7 @@ function csvAuthPlugin({ solarApiKey, teacherInviteCode, demoStudentPassword }) 
       await prepareCsvStorage();
       await seedDemoStudents(demoStudentPassword);
       await prepareSubmissionStorage();
+      await prepareProblemStorage();
       server.middlewares.use((request, response, next) => {
         let pathname = "";
         try {
@@ -393,9 +451,59 @@ function csvAuthPlugin({ solarApiKey, teacherInviteCode, demoStudentPassword }) 
       });
       server.middlewares.use((request, response, next) => {
         const pathname = new URL(request.url || "/", "http://localhost").pathname;
-        if (!pathname.startsWith("/api/auth/") && !pathname.startsWith("/api/tutor/") && !pathname.startsWith("/api/teacher/") && pathname !== "/api/submissions") return next();
+        if (!pathname.startsWith("/api/auth/") && !pathname.startsWith("/api/tutor/") && !pathname.startsWith("/api/teacher/") && pathname !== "/api/submissions" && pathname !== "/api/problems") return next();
 
         (async () => {
+          if (pathname === "/api/problems" && request.method === "GET") {
+            const session = readSession(request);
+            if (!session) return sendJson(response, 401, { error: "로그인이 필요합니다." });
+            const problems = await readProblems();
+            return sendJson(response, 200, { problems: problems.filter(problem => problem.isPublished) });
+          }
+
+          if (pathname.startsWith("/api/teacher/problems")) {
+            const session = readSession(request);
+            if (!session) return sendJson(response, 401, { error: "로그인이 필요합니다." });
+            if (session.role !== "teacher") return sendJson(response, 403, { error: "교사 계정만 문제를 관리할 수 있습니다." });
+            const collectionPath = "/api/teacher/problems";
+            const problems = await readProblems();
+            if (pathname === collectionPath && request.method === "GET") return sendJson(response, 200, { problems });
+            if (pathname === collectionPath && request.method === "POST") {
+              const body = await readJson(request);
+              const validated = validateProblemInput(body);
+              if (!validated || typeof body.isPublished !== "boolean") return sendJson(response, 400, { error: "문제 내용이나 테스트 케이스를 확인해 주세요." });
+              const id = `custom-${randomUUID()}`;
+              const problem = {
+                ...validated,
+                id,
+                number: `CU-${id.slice(7, 13).toUpperCase()}`
+              };
+              problems.push(problem);
+              await saveProblems(problems);
+              return sendJson(response, 201, { problem });
+            }
+
+            const problemId = decodeURIComponent(pathname.slice(`${collectionPath}/`.length));
+            const index = problems.findIndex(problem => problem.id === problemId);
+            if (index < 0) return sendJson(response, 404, { error: "문제를 찾을 수 없습니다." });
+            if (request.method === "PATCH") {
+              const body = await readJson(request);
+              if (typeof body.isPublished !== "boolean") return sendJson(response, 400, { error: "공개 설정 값이 올바르지 않습니다." });
+              problems[index].isPublished = body.isPublished;
+            } else if (request.method === "PUT") {
+              const body = await readJson(request);
+              const validated = validateProblemInput(body);
+              if (!validated || typeof body.isPublished !== "boolean") return sendJson(response, 400, { error: "문제 내용이나 테스트 케이스를 확인해 주세요." });
+              problems[index] = { ...problems[index], ...validated, rate: problems[index].rate };
+            } else if (request.method === "DELETE") {
+              problems.splice(index, 1);
+            } else {
+              return sendJson(response, 405, { error: "지원하지 않는 요청입니다." });
+            }
+            await saveProblems(problems);
+            return sendJson(response, 200, { problems });
+          }
+
           if (pathname === "/api/submissions" && request.method === "POST") {
             const session = readSession(request);
             if (!session) return sendJson(response, 401, { error: "로그인이 필요합니다." });
@@ -407,8 +515,11 @@ function csvAuthPlugin({ solarApiKey, teacherInviteCode, demoStudentPassword }) 
             const problemId = String(body.problemId || "");
             const passed = Number(body.passed);
             const total = Number(body.total);
-            if (!/^(10[1-5]|ai-[a-z0-9-]{1,80})$/.test(problemId) || !topics.includes(body.topic) || !levels.includes(body.level) || !statuses.includes(body.status) || !Number.isInteger(passed) || !Number.isInteger(total) || total < 1 || total > 10 || passed < 0 || passed > total) {
+            if (!/^(10[1-5]|custom-[a-z0-9-]{1,80}|ai-[a-z0-9-]{1,80})$/.test(problemId) || !topics.includes(body.topic) || !levels.includes(body.level) || !statuses.includes(body.status) || !Number.isInteger(passed) || !Number.isInteger(total) || total < 1 || total > 10 || passed < 0 || passed > total) {
               return sendJson(response, 400, { error: "제출 기록 형식이 올바르지 않습니다." });
+            }
+            if (!problemId.startsWith("ai-") && !(await readProblems()).some(problem => problem.id === problemId && problem.isPublished)) {
+              return sendJson(response, 404, { error: "공개 중인 문제를 찾을 수 없습니다." });
             }
             const row = [
               session.studentId,

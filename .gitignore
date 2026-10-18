@@ -6,3 +6,4 @@ dist/
 data/students.csv
 .private/students.csv
 .private/*.csv
+.private/*.json
