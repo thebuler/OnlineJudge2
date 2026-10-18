@@ -1,0 +1,24 @@
+- generic [active] [ref=e1]:
+  - region "학생 로그인" [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: STUDENT SPACE
+      - heading "학생 로그인" [level=2] [ref=e6]
+      - paragraph [ref=e7]: 학번과 비밀번호를 입력해 문제 풀이를 시작하세요.
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - generic [ref=e10]: 학번
+          - textbox "학번" [ref=e11]:
+            - /placeholder: 학번을 입력하세요
+        - generic [ref=e12]:
+          - generic [ref=e13]: 비밀번호
+          - textbox "비밀번호" [ref=e14]:
+            - /placeholder: 비밀번호를 입력하세요
+        - button "로그인" [ref=e15] [cursor=pointer]
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - text: 체험용 계정
+          - strong [ref=e18]: student01 / python123
+        - button "계정 입력" [ref=e19] [cursor=pointer]
+      - paragraph [ref=e20]: 이 로그인은 화면 체험용으로, 입력값은 이 웹페이지 안에서만 확인합니다. 실제 계정 보안 기능은 제공하지 않습니다.
+  - text: +
+  - status

@@ -1,0 +1,112 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e21]:
+    - complementary "주 메뉴" [ref=e22]:
+      - img [ref=e25]
+      - navigation [ref=e27]:
+        - button [ref=e28] [cursor=pointer]:
+          - img [ref=e29]
+        - button [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+        - button [ref=e34] [cursor=pointer]:
+          - img [ref=e35]
+      - generic [ref=e38]:
+        - generic [ref=e39]: 김
+        - button "로그아웃" [ref=e40] [cursor=pointer]:
+          - img [ref=e41]
+          - generic: 나가기
+    - main [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - text: 학생 공간 /
+          - strong [ref=e47]: 문제 풀이
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - img [ref=e50]
+            - searchbox "문제 검색" [ref=e53]
+          - button "알림 보기" [ref=e54] [cursor=pointer]:
+            - img [ref=e55]
+      - region "두 수의 합 구하기" [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - article [ref=e61]:
+              - button "문제 목록으로" [ref=e62] [cursor=pointer]:
+                - img [ref=e63]
+                - text: 문제 목록으로
+              - text: 쉬움
+              - heading "두 수의 합 구하기" [level=2] [ref=e65]
+              - generic [ref=e66]:
+                - generic [ref=e67]: 입출력
+                - generic [ref=e68]: 정답률 82%
+                - generic [ref=e69]: 예상 시간 5분
+              - generic [ref=e70]:
+                - heading "문제" [level=3] [ref=e71]
+                - paragraph [ref=e72]: 두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.
+              - generic [ref=e73]:
+                - heading "입력" [level=3] [ref=e74]
+                - paragraph [ref=e75]: 첫째 줄에 두 정수 A와 B가 공백으로 구분되어 주어집니다.
+              - generic [ref=e76]:
+                - heading "출력" [level=3] [ref=e77]
+                - paragraph [ref=e78]: 두 정수 A와 B의 합을 출력합니다.
+              - generic [ref=e79]:
+                - heading "예제" [level=3] [ref=e80]
+                - generic [ref=e81]:
+                  - generic [ref=e82]: 입력
+                  - code [ref=e83]: 3 5
+                - generic [ref=e84]:
+                  - generic [ref=e85]: 출력
+                  - code [ref=e86]: "8"
+              - group [ref=e87]:
+                - generic "모범 답안 확인 +" [ref=e88] [cursor=pointer]
+            - complementary [ref=e89]:
+              - generic [ref=e90]:
+                - img [ref=e91]
+                - text: AI 학습 힌트
+              - paragraph [ref=e93]: 입력된 두 값을 정수로 바꾸고, 더한 결과를 출력하는 순서를 생각해 보세요.
+              - generic [ref=e94]: 개념을 떠올릴 수 있도록 힌트만 제공해요.
+          - generic [ref=e95]:
+            - article [ref=e96]:
+              - generic [ref=e97]:
+                - generic [ref=e98]:
+                  - generic [ref=e99]: PY
+                  - text: main.py
+                - generic [ref=e100]:
+                  - button "초기화" [ref=e101] [cursor=pointer]
+                  - button "임시 저장" [ref=e102] [cursor=pointer]
+              - generic [ref=e103]:
+                - generic [ref=e104]: 1 2 3 4 5 6 7 8 9 10 11 12
+                - textbox "파이썬 코드 편집기" [ref=e105]: a, b = map(int, input().split()) print(a + b)
+              - generic [ref=e106]:
+                - generic [ref=e107]: Tab 키로 들여쓰기 · 답안은 이 기기에 임시 저장됩니다
+                - button "코드 제출" [ref=e108] [cursor=pointer]:
+                  - img [ref=e109]
+                  - text: 코드 제출
+            - status [ref=e112]:
+              - generic [ref=e113]:
+                - img [ref=e114]
+                - generic [ref=e117]: 정답 · 모든 테스트 통과
+              - paragraph [ref=e118]: 테스트 3 / 3개를 통과했습니다.
+              - table [ref=e120]:
+                - rowgroup [ref=e121]:
+                  - row "테스트 결과 내 출력 기대 출력" [ref=e122]:
+                    - columnheader "테스트" [ref=e123]
+                    - columnheader "결과" [ref=e124]
+                    - columnheader "내 출력" [ref=e125]
+                    - columnheader "기대 출력" [ref=e126]
+                - rowgroup [ref=e127]:
+                  - row "테스트 1 통과 8 8" [ref=e128]:
+                    - cell "테스트 1" [ref=e129]
+                    - cell "통과" [ref=e130]
+                    - cell "8" [ref=e131]
+                    - cell "8" [ref=e132]
+                  - row "테스트 2 통과 6 6" [ref=e133]:
+                    - cell "테스트 2" [ref=e134]
+                    - cell "통과" [ref=e135]
+                    - cell "6" [ref=e136]
+                    - cell "6" [ref=e137]
+                  - row "테스트 3 통과 0 0" [ref=e138]:
+                    - cell "테스트 3" [ref=e139]
+                    - cell "통과" [ref=e140]
+                    - cell "0" [ref=e141]
+                    - cell "0" [ref=e142]
+        - paragraph [ref=e143]: 코드는 브라우저의 격리 실행 환경에서 채점하며 서버로 전송하지 않습니다. 실행 시간은 최대 3초로 제한됩니다.
+  - status

@@ -247,11 +247,27 @@
     .submit-button { display: inline-flex; min-height: 39px; align-items: center; gap: 7px; border: 0; border-radius: 8px; background: var(--purple); padding: 0 13px; color: white; cursor: pointer; font-size: 12px; font-weight: 700; }
     .submit-button:hover { background: var(--purple-dark); }
     .submit-button svg { width: 15px; height: 15px; stroke: currentColor; }
-    .result-panel { display: none; margin-top: 13px; border: 1px solid #efddb7; border-radius: 10px; background: #fffbf2; padding: 14px; }
+    .result-panel { display: none; margin-top: 13px; border: 1px solid #e4e5ed; border-radius: 10px; background: #fff; padding: 14px; }
     .result-panel.show { display: block; }
-    .result-title { display: flex; align-items: center; gap: 7px; color: #925e17; font-size: 12px; font-weight: 750; }
+    .result-panel.accepted { border-color: #cbe9d9; background: #f5fcf8; }
+    .result-panel.rejected { border-color: #f0d1d1; background: #fff9f9; }
+    .result-panel.runtime-error, .result-panel.time-limit { border-color: #efddb7; background: #fffbf2; }
+    .result-title { display: flex; align-items: center; gap: 7px; color: #55596e; font-size: 12px; font-weight: 750; }
+    .result-panel.accepted .result-title { color: #247a59; }
+    .result-panel.rejected .result-title { color: #ac4949; }
+    .result-panel.runtime-error .result-title, .result-panel.time-limit .result-title { color: #925e17; }
     .result-title svg { width: 16px; height: 16px; stroke: currentColor; }
-    .result-panel p { margin: 7px 0 0; color: #826c4e; font-size: 11px; line-height: 1.7; }
+    .result-panel p { margin: 7px 0 0; color: #686c80; font-size: 11px; line-height: 1.7; }
+    .case-table-wrap { overflow-x: auto; margin-top: 11px; }
+    .case-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .case-table th { border-bottom: 1px solid #e8e9ef; padding: 7px 8px; color: #85899b; font-size: 10px; font-weight: 650; white-space: nowrap; }
+    .case-table td { border-bottom: 1px solid #eeeff3; padding: 8px; color: #55596e; font-size: 10px; vertical-align: top; }
+    .case-table tr:last-child td { border-bottom: 0; }
+    .case-mark { font-weight: 750; }
+    .case-mark.pass { color: #248b66; }
+    .case-mark.fail { color: #bd5555; }
+    .case-mark.error { color: #af701e; }
+    .case-output { display: block; max-width: 180px; overflow-wrap: anywhere; color: #55596e; font: 10px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }
     .notice { position: fixed; right: 22px; bottom: 22px; z-index: 10; max-width: calc(100vw - 44px); transform: translateY(12px); border-radius: 10px; background: #292b40; padding: 12px 16px; color: white; font-size: 12px; opacity: 0; pointer-events: none; transition: .2s; }
     .notice.show { transform: translateY(0); opacity: 1; }
     .mobile-menu { display: none; }
@@ -477,10 +493,10 @@
                 <div class="editor-area"><div class="line-numbers" id="lineNumbers" aria-hidden="true">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12</div><textarea class="code-input" id="codeInput" aria-label="파이썬 코드 편집기" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea></div>
                 <div class="editor-footer"><span class="editor-hint">Tab 키로 들여쓰기 · 답안은 이 기기에 임시 저장됩니다</span><button class="submit-button" id="submitCode"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>코드 제출</button></div>
               </article>
-              <div class="result-panel" id="resultPanel" role="status" aria-live="polite"><div class="result-title"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg><span id="resultTitle">체험용 채점 결과</span></div><p id="resultText"></p></div>
+              <div class="result-panel" id="resultPanel" role="status" aria-live="polite"><div class="result-title"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg><span id="resultTitle">채점 결과</span></div><p id="resultText"></p><div class="case-table-wrap" id="caseTableWrap" hidden><table class="case-table"><thead><tr><th>테스트</th><th>결과</th><th>내 출력</th><th>기대 출력</th></tr></thead><tbody id="caseRows"></tbody></table></div></div>
             </div>
           </div>
-          <p class="footer-note">이 화면은 학습용 프로토타입입니다. 파이썬 코드를 실제로 실행하거나 채점하지 않습니다.</p>
+          <p class="footer-note">코드는 브라우저의 격리 실행 환경에서 채점하며 서버로 전송하지 않습니다. 실행 시간은 최대 3초로 제한됩니다.</p>
         </section>
       </div>
     </main>
@@ -489,16 +505,18 @@
 
   <script>
     const problems = [
-      { id: "101", number: "PY-001", title: "두 수의 합 구하기", topic: "입출력", level: "쉬움", rate: "82%", description: "두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.", input: "3 5", output: "8", hint: "입력된 두 값을 정수로 바꾸고, 더한 결과를 출력하는 순서를 생각해 보세요.", solution: "a, b = map(int, input().split())\nprint(a + b)" },
-      { id: "102", number: "PY-002", title: "짝수일까요?", topic: "조건문", level: "쉬움", rate: "76%", description: "정수 N이 주어집니다. N이 짝수이면 '짝수', 홀수이면 '홀수'를 출력해 주세요.", input: "7", output: "홀수", hint: "어떤 수를 2로 나눈 나머지가 0이면 어떤 수일까요?", solution: "n = int(input())\nif n % 2 == 0:\n    print(\"짝수\")\nelse:\n    print(\"홀수\")" },
-      { id: "103", number: "PY-003", title: "별 계단 만들기", topic: "반복문", level: "보통", rate: "64%", description: "정수 N이 주어집니다. 첫째 줄부터 N번째 줄까지 별을 하나씩 늘려 출력해 주세요.", input: "4", output: "*\n**\n***\n****", hint: "줄 번호가 바뀔 때마다 별의 개수도 어떻게 달라지는지 살펴보세요.", solution: "n = int(input())\nfor i in range(1, n + 1):\n    print(\"*\" * i)" },
-      { id: "104", number: "PY-004", title: "가장 큰 수 찾기", topic: "리스트", level: "보통", rate: "58%", description: "세 정수가 주어집니다. 이 중 가장 큰 수를 출력해 주세요.", input: "4 9 2", output: "9", hint: "파이썬에서 여러 값 중 가장 큰 값을 구하는 방법을 떠올려 보세요.", solution: "numbers = list(map(int, input().split()))\nprint(max(numbers))" },
-      { id: "105", number: "PY-005", title: "구구단 한 단 출력하기", topic: "반복문", level: "도전", rate: "41%", description: "정수 N이 주어집니다. N단의 결과를 1부터 9까지 한 줄씩 출력해 주세요.", input: "3", output: "3 x 1 = 3\n3 x 2 = 6\n...", hint: "곱하는 수가 1부터 9까지 바뀌는 반복을 만들 수 있을까요?", solution: "n = int(input())\nfor i in range(1, 10):\n    print(f\"{n} x {i} = {n * i}\")" }
+      { id: "101", number: "PY-001", title: "두 수의 합 구하기", topic: "입출력", level: "쉬움", rate: "82%", description: "두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.", input: "3 5", output: "8", hint: "입력된 두 값을 정수로 바꾸고, 더한 결과를 출력하는 순서를 생각해 보세요.", solution: "a, b = map(int, input().split())\nprint(a + b)", testCases: [{ input: "3 5", expected: "8" }, { input: "-4 10", expected: "6" }, { input: "0 0", expected: "0" }] },
+      { id: "102", number: "PY-002", title: "짝수일까요?", topic: "조건문", level: "쉬움", rate: "76%", description: "정수 N이 주어집니다. N이 짝수이면 '짝수', 홀수이면 '홀수'를 출력해 주세요.", input: "7", output: "홀수", hint: "어떤 수를 2로 나눈 나머지가 0이면 어떤 수일까요?", solution: "n = int(input())\nif n % 2 == 0:\n    print(\"짝수\")\nelse:\n    print(\"홀수\")", testCases: [{ input: "7", expected: "홀수" }, { input: "-4", expected: "짝수" }, { input: "0", expected: "짝수" }] },
+      { id: "103", number: "PY-003", title: "별 계단 만들기", topic: "반복문", level: "보통", rate: "64%", description: "정수 N이 주어집니다. 첫째 줄부터 N번째 줄까지 별을 하나씩 늘려 출력해 주세요.", input: "4", output: "*\n**\n***\n****", hint: "줄 번호가 바뀔 때마다 별의 개수도 어떻게 달라지는지 살펴보세요.", solution: "n = int(input())\nfor i in range(1, n + 1):\n    print(\"*\" * i)", testCases: [{ input: "1", expected: "*" }, { input: "3", expected: "*\n**\n***" }, { input: "4", expected: "*\n**\n***\n****" }] },
+      { id: "104", number: "PY-004", title: "가장 큰 수 찾기", topic: "리스트", level: "보통", rate: "58%", description: "세 정수가 주어집니다. 이 중 가장 큰 수를 출력해 주세요.", input: "4 9 2", output: "9", hint: "파이썬에서 여러 값 중 가장 큰 값을 구하는 방법을 떠올려 보세요.", solution: "numbers = list(map(int, input().split()))\nprint(max(numbers))", testCases: [{ input: "4 9 2", expected: "9" }, { input: "-5 -1 -3", expected: "-1" }, { input: "8 8 2", expected: "8" }] },
+      { id: "105", number: "PY-005", title: "구구단 한 단 출력하기", topic: "반복문", level: "도전", rate: "41%", description: "정수 N이 주어집니다. N단의 결과를 1부터 9까지 한 줄씩 출력해 주세요.", input: "3", output: "3 x 1 = 3\n3 x 2 = 6\n...", hint: "곱하는 수가 1부터 9까지 바뀌는 반복을 만들 수 있을까요?", solution: "n = int(input())\nfor i in range(1, 10):\n    print(f\"{n} x {i} = {n * i}\")", testCases: [{ input: "2", expected: "2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18" }, { input: "3", expected: "3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15\n3 x 6 = 18\n3 x 7 = 21\n3 x 8 = 24\n3 x 9 = 27" }] }
     ];
     const starterCode = "# 두 정수를 입력받아 합을 출력해 보세요.\n\n";
     let activeFilter = "all";
     let currentProblem = problems[0];
     let currentUser = null;
+    let activeJudgeWorker = null;
+    let judgeTimeoutId = null;
     let tutorEnabled = localStorage.getItem("codeon-tutor-enabled") !== "false";
     let activeResultFilter = "all";
     const $ = (selector, root = document) => root.querySelector(selector);
@@ -592,6 +610,104 @@
     function updateLineNumbers() {
       const count = Math.max(12, $("#codeInput").value.split("\n").length);
       $("#lineNumbers").innerHTML = Array.from({ length: count }, (_, index) => index + 1).join("<br>");
+    }
+
+    function finishJudge() {
+      clearTimeout(judgeTimeoutId);
+      activeJudgeWorker?.terminate();
+      activeJudgeWorker = null;
+      $("#submitCode").disabled = false;
+    }
+
+    function showJudgeState(kind, title, message) {
+      const panel = $("#resultPanel");
+      panel.className = `result-panel show ${kind}`;
+      $("#resultTitle").textContent = title;
+      $("#resultText").textContent = message;
+      $("#caseTableWrap").hidden = true;
+      $("#caseRows").replaceChildren();
+      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function renderJudgeResult(result) {
+      finishJudge();
+      const passedCount = result.results.filter(testCase => testCase.passed).length;
+      const runtimeError = result.results.find(testCase => testCase.error);
+      const kind = runtimeError ? "runtime-error" : result.status === "accepted" ? "accepted" : "rejected";
+      const title = runtimeError ? "실행 오류" : result.status === "accepted" ? "정답 · 모든 테스트 통과" : "오답 · 일부 테스트 실패";
+      const message = runtimeError
+        ? `${passedCount}개 테스트를 통과한 뒤 실행 오류가 발생했습니다: ${runtimeError.error}`
+        : `테스트 ${passedCount} / ${result.total}개를 통과했습니다.`;
+      showJudgeState(kind, title, message);
+      const rows = result.results.map((testCase, index) => {
+        const row = document.createElement("tr");
+        const values = [
+          `테스트 ${index + 1}`,
+          testCase.error ? "오류" : testCase.passed ? "통과" : "실패",
+          testCase.error || testCase.output || "(출력 없음)",
+          testCase.expected || "(빈 출력)"
+        ];
+        values.forEach((value, cellIndex) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          if (cellIndex === 1) cell.className = `case-mark ${testCase.error ? "error" : testCase.passed ? "pass" : "fail"}`;
+          if (cellIndex > 1) cell.className = "case-output";
+          row.append(cell);
+        });
+        return row;
+      });
+      $("#caseRows").replaceChildren(...rows);
+      $("#caseTableWrap").hidden = false;
+    }
+
+    function submitForJudging() {
+      const source = $("#codeInput").value;
+      if (!source.trim()) {
+        toast("먼저 파이썬 코드를 작성해 주세요.");
+        return;
+      }
+      if (source.length > 12000) {
+        toast("코드가 너무 깁니다. 12,000자 이내로 줄여주세요.");
+        return;
+      }
+
+      localStorage.setItem(`codeon-code-${currentProblem.id}`, source);
+      $("#submitCode").disabled = true;
+      showJudgeState("processing", "채점 준비 중", "브라우저에서 파이썬 실행 환경을 불러오고 있습니다.");
+      try {
+        activeJudgeWorker = new Worker("/judge-worker.js", { type: "module" });
+      } catch {
+        $("#submitCode").disabled = false;
+        showJudgeState("runtime-error", "채점 환경을 시작하지 못했어요", "이 브라우저에서 격리 실행 기능을 사용할 수 없습니다.");
+        return;
+      }
+
+      const worker = activeJudgeWorker;
+      judgeTimeoutId = setTimeout(() => {
+        finishJudge();
+        showJudgeState("time-limit", "시간 초과", "실행 환경 응답이 너무 늦어 채점을 중단했습니다.");
+      }, 25000);
+      worker.onmessage = event => {
+        if (activeJudgeWorker !== worker) return;
+        if (event.data.type === "ready") {
+          clearTimeout(judgeTimeoutId);
+          showJudgeState("processing", "테스트 케이스 실행 중", "작성한 코드를 각 입력값으로 확인하고 있습니다.");
+          judgeTimeoutId = setTimeout(() => {
+            finishJudge();
+            showJudgeState("time-limit", "시간 초과", "실행이 3초를 넘어 자동으로 중단됐습니다.");
+          }, 3000);
+          return;
+        }
+        if (event.data.type === "result") return renderJudgeResult(event.data);
+        finishJudge();
+        showJudgeState("runtime-error", "채점할 수 없습니다", event.data.message || "실행 환경에서 오류가 발생했습니다.");
+      };
+      worker.onerror = () => {
+        if (activeJudgeWorker !== worker) return;
+        finishJudge();
+        showJudgeState("runtime-error", "채점 환경을 불러오지 못했어요", "인터넷 연결을 확인한 뒤 다시 제출해 주세요.");
+      };
+      worker.postMessage({ source, testCases: currentProblem.testCases });
     }
 
     document.addEventListener("click", event => {
@@ -692,13 +808,7 @@
       updateLineNumbers();
       toast("코드를 처음 상태로 바꿨어요.");
     });
-    $("#submitCode").addEventListener("click", () => {
-      localStorage.setItem(`codeon-code-${currentProblem.id}`, $("#codeInput").value);
-      $("#resultTitle").textContent = "체험용 채점 결과 · 실제 실행 아님";
-      $("#resultText").textContent = "이 프로토타입은 파이썬 코드를 실제로 실행하거나 테스트 케이스와 비교하지 않아요. 실제 채점에는 안전한 서버 실행 환경이 필요합니다.";
-      $("#resultPanel").classList.add("show");
-      $("#resultPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
+    $("#submitCode").addEventListener("click", submitForJudging);
 
     renderProblems();
     updateLineNumbers();
