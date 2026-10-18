@@ -1,0 +1,108 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "주 메뉴" [ref=e3]:
+      - img [ref=e6]
+      - navigation [ref=e8]:
+        - button [ref=e9] [cursor=pointer]:
+          - img [ref=e10]
+        - button [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - button [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+      - navigation [ref=e18]:
+        - button [ref=e19] [cursor=pointer]:
+          - img [ref=e20]
+      - generic [ref=e25]: 김
+    - main [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - text: 학생 공간 /
+          - strong [ref=e29]: 나의 학습
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - img [ref=e32]
+            - searchbox "문제 검색" [ref=e35]
+          - button "알림 보기" [ref=e36] [cursor=pointer]:
+            - img [ref=e37]
+      - generic [ref=e39]:
+        - region "민서님, 오늘도 한 문제씩!" [ref=e40]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: 오늘의 학습 기록
+            - heading "민서님, 오늘도 한 문제씩!" [level=1] [ref=e44]
+            - paragraph [ref=e45]: 작은 문제를 풀다 보면 어느새 큰 실력이 돼요.
+          - region "두 수의 합 구하기" [ref=e46]:
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - img [ref=e49]
+                - text: 오늘의 추천 문제
+              - heading "두 수의 합 구하기" [level=2] [ref=e51]
+              - paragraph [ref=e52]: 입력받은 두 정수를 더해 출력해 볼까요? 파이썬의 기본 입출력을 연습하는 문제예요.
+              - button "문제 풀기" [ref=e53] [cursor=pointer]:
+                - text: 문제 풀기
+                - img [ref=e54]
+          - region "나의 학습 통계" [ref=e56]:
+            - article [ref=e57]:
+              - img [ref=e59]
+              - generic [ref=e61]:
+                - generic [ref=e62]: 이번 달 푼 문제
+                - generic [ref=e63]: 18문제
+            - article [ref=e64]:
+              - img [ref=e66]
+              - generic [ref=e69]:
+                - generic [ref=e70]: 정답으로 통과
+                - generic [ref=e71]: 14문제
+            - article [ref=e72]:
+              - img [ref=e74]
+              - generic [ref=e76]:
+                - generic [ref=e77]: 학습 중인 단원
+                - generic [ref=e78]: 조건문기초
+          - region "도전할 문제" [ref=e79]:
+            - generic [ref=e80]:
+              - heading "도전할 문제" [level=2] [ref=e81]
+              - button "전체 문제 보기" [ref=e82] [cursor=pointer]:
+                - text: 전체 문제 보기
+                - img [ref=e83]
+            - generic "난이도 필터" [ref=e85]:
+              - button "전체" [ref=e86] [cursor=pointer]
+              - button "쉬움" [ref=e87] [cursor=pointer]
+              - button "보통" [ref=e88] [cursor=pointer]
+              - button "도전" [ref=e89] [cursor=pointer]
+            - generic [ref=e90]:
+              - article [ref=e91]:
+                - generic [ref=e92]: PY-001
+                - generic [ref=e93]:
+                  - generic [ref=e94]: 두 수의 합 구하기
+                  - generic [ref=e95]: 입출력
+                - generic [ref=e96]: 쉬움
+                - button "문제 풀기" [ref=e97] [cursor=pointer]
+              - article [ref=e98]:
+                - generic [ref=e99]: PY-002
+                - generic [ref=e100]:
+                  - generic [ref=e101]: 짝수일까요?
+                  - generic [ref=e102]: 조건문
+                - generic [ref=e103]: 쉬움
+                - button "문제 풀기" [ref=e104] [cursor=pointer]
+              - article [ref=e105]:
+                - generic [ref=e106]: PY-003
+                - generic [ref=e107]:
+                  - generic [ref=e108]: 별 계단 만들기
+                  - generic [ref=e109]: 반복문
+                - generic [ref=e110]: 보통
+                - button "문제 풀기" [ref=e111] [cursor=pointer]
+              - article [ref=e112]:
+                - generic [ref=e113]: PY-004
+                - generic [ref=e114]:
+                  - generic [ref=e115]: 가장 큰 수 찾기
+                  - generic [ref=e116]: 리스트
+                - generic [ref=e117]: 보통
+                - button "문제 풀기" [ref=e118] [cursor=pointer]
+              - article [ref=e119]:
+                - generic [ref=e120]: PY-005
+                - generic [ref=e121]:
+                  - generic [ref=e122]: 구구단 한 단 출력하기
+                  - generic [ref=e123]: 반복문
+                - generic [ref=e124]: 도전
+                - button "문제 풀기" [ref=e125] [cursor=pointer]
+            - paragraph [ref=e126]: 문제와 학습 기록은 화면 예시를 위한 샘플 데이터입니다.
+        - text: +
+  - status

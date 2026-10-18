@@ -1,0 +1,103 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "주 메뉴" [ref=e3]:
+      - img [ref=e6]
+      - navigation [ref=e8]:
+        - button [ref=e9] [cursor=pointer]:
+          - img [ref=e10]
+        - button [ref=e12] [cursor=pointer]:
+          - img [ref=e13]
+        - button [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+      - generic [ref=e20]: 김
+    - main [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - text: 학생 공간 /
+          - strong [ref=e24]: 나의 학습
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - img [ref=e27]
+            - searchbox "문제 검색" [ref=e30]
+          - button "알림 보기" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+      - region "민서님, 오늘도 한 문제씩!" [ref=e35]:
+        - generic [ref=e37]:
+          - generic [ref=e38]: 오늘의 학습 기록
+          - heading "민서님, 오늘도 한 문제씩!" [level=1] [ref=e39]
+          - paragraph [ref=e40]: 작은 문제를 풀다 보면 어느새 큰 실력이 돼요.
+        - region "두 수의 합 구하기" [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - img [ref=e44]
+              - text: 오늘의 추천 문제
+            - heading "두 수의 합 구하기" [level=2] [ref=e46]
+            - paragraph [ref=e47]: 입력받은 두 정수를 더해 출력해 볼까요? 파이썬의 기본 입출력을 연습하는 문제예요.
+            - button "문제 풀기" [ref=e48] [cursor=pointer]:
+              - text: 문제 풀기
+              - img [ref=e49]
+        - region "나의 학습 통계" [ref=e51]:
+          - article [ref=e52]:
+            - img [ref=e54]
+            - generic [ref=e56]:
+              - generic [ref=e57]: 이번 달 푼 문제
+              - generic [ref=e58]: 18문제
+          - article [ref=e59]:
+            - img [ref=e61]
+            - generic [ref=e64]:
+              - generic [ref=e65]: 정답으로 통과
+              - generic [ref=e66]: 14문제
+          - article [ref=e67]:
+            - img [ref=e69]
+            - generic [ref=e71]:
+              - generic [ref=e72]: 학습 중인 단원
+              - generic [ref=e73]: 조건문기초
+        - region "도전할 문제" [ref=e74]:
+          - generic [ref=e75]:
+            - heading "도전할 문제" [level=2] [ref=e76]
+            - button "전체 문제 보기" [ref=e77] [cursor=pointer]:
+              - text: 전체 문제 보기
+              - img [ref=e78]
+          - generic "난이도 필터" [ref=e80]:
+            - button "전체" [ref=e81] [cursor=pointer]
+            - button "쉬움" [ref=e82] [cursor=pointer]
+            - button "보통" [ref=e83] [cursor=pointer]
+            - button "도전" [ref=e84] [cursor=pointer]
+          - generic [ref=e85]:
+            - article [ref=e86]:
+              - generic [ref=e87]: PY-001
+              - generic [ref=e88]:
+                - generic [ref=e89]: 두 수의 합 구하기
+                - generic [ref=e90]: 입출력
+              - generic [ref=e91]: 쉬움
+              - button "문제 풀기" [ref=e92] [cursor=pointer]
+            - article [ref=e93]:
+              - generic [ref=e94]: PY-002
+              - generic [ref=e95]:
+                - generic [ref=e96]: 짝수일까요?
+                - generic [ref=e97]: 조건문
+              - generic [ref=e98]: 쉬움
+              - button "문제 풀기" [ref=e99] [cursor=pointer]
+            - article [ref=e100]:
+              - generic [ref=e101]: PY-003
+              - generic [ref=e102]:
+                - generic [ref=e103]: 별 계단 만들기
+                - generic [ref=e104]: 반복문
+              - generic [ref=e105]: 보통
+              - button "문제 풀기" [ref=e106] [cursor=pointer]
+            - article [ref=e107]:
+              - generic [ref=e108]: PY-004
+              - generic [ref=e109]:
+                - generic [ref=e110]: 가장 큰 수 찾기
+                - generic [ref=e111]: 리스트
+              - generic [ref=e112]: 보통
+              - button "문제 풀기" [ref=e113] [cursor=pointer]
+            - article [ref=e114]:
+              - generic [ref=e115]: PY-005
+              - generic [ref=e116]:
+                - generic [ref=e117]: 구구단 한 단 출력하기
+                - generic [ref=e118]: 반복문
+              - generic [ref=e119]: 도전
+              - button "문제 풀기" [ref=e120] [cursor=pointer]
+          - paragraph [ref=e121]: 문제와 학습 기록은 화면 예시를 위한 샘플 데이터입니다.
+  - status

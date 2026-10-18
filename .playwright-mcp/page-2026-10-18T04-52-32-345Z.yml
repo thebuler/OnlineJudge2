@@ -1,0 +1,49 @@
+- generic [active] [ref=e1]:
+  - region "학생 로그인" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e6]
+        - text: 코드온
+      - generic [ref=e8]:
+        - generic [ref=e9]: PYTHON · LEARN BY DOING
+        - heading "한 줄씩 쓰고, 한 단계씩 성장해요." [level=1] [ref=e10]:
+          - text: 한 줄씩 쓰고,
+          - text: 한 단계씩 성장해요.
+        - paragraph [ref=e11]: 내 속도에 맞춰 문제를 풀고, 작은 성공을 쌓아가는 코딩 교실입니다.
+        - generic [ref=e12]:
+          - generic [ref=e13]:
+            - generic [ref=e14]: today.py
+            - generic [ref=e15]: Python 3
+          - generic [ref=e16]:
+            - generic [ref=e17]: "1"
+            - emphasis [ref=e18]: for
+            - text: "step in learning:"
+          - generic [ref=e19]:
+            - generic [ref=e20]: "2"
+            - text: practice(step)
+          - generic [ref=e21]:
+            - generic [ref=e22]: "3"
+            - text: print("계속 성장 중!")
+      - generic [ref=e23]: 새솔중학교 · 파이썬 문제 풀이 공간
+    - generic [ref=e25]:
+      - generic [ref=e26]: STUDENT SPACE
+      - heading "학생 로그인" [level=2] [ref=e27]
+      - paragraph [ref=e28]: 학번으로 로그인하고 오늘의 문제를 풀어보세요.
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]: 학번
+          - textbox "학번" [ref=e32]:
+            - /placeholder: 학번을 입력하세요
+        - generic [ref=e33]:
+          - generic [ref=e34]: 비밀번호
+          - textbox "비밀번호" [ref=e35]:
+            - /placeholder: 비밀번호를 입력하세요
+        - button "학생으로 로그인" [ref=e36] [cursor=pointer]
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - text: 체험 계정
+          - strong [ref=e39]: student01 / python123
+        - button "체험 계정 입력" [ref=e40] [cursor=pointer]
+      - paragraph [ref=e41]: 프로토타입 로그인입니다. 계정·비밀번호는 화면 체험을 위해 브라우저에서만 확인하며, 실제 인증 서버에는 연결되지 않았습니다.
+  - text: +
+  - status
