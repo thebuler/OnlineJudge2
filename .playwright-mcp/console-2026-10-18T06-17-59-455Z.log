@@ -1,0 +1,10 @@
+[     107ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   49795ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   50091ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   55270ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   55485ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   66405ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   66496ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   88068ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   88077ms] [ERROR] WebSocket connection to 'wss://ruyia6tg3f2q4vzs.jitda.io/' failed: Error during WebSocket handshake: Unexpected response code: 503 @ https://ruyia6tg3f2q4vzs.jitda.io/@vite/client:1034
+[   89601ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1

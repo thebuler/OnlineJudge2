@@ -1,1 +1,10 @@
 [     128ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  754049ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  754534ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  773934ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://ruyia6tg3f2q4vzs.jitda.io/:0
+[  774045ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://ruyia6tg3f2q4vzs.jitda.io/hub/static/components/requirejs/require.js?v=1ff44af658602d913b22fca97c78f98945f47e76dacf9800f32f35350f05e9acda6dc710b8501579076f3980de02f02c97f5994ce1a9864c21865a42262d79ec:0
+[  774046ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://ruyia6tg3f2q4vzs.jitda.io/hub/static/js/darkmode.js?v=2fd9a7d11ad78df9351fed40ab35eab52e1e6a3d516f188b652120e6faf57b8e387a30aae8f52a6fb51563d06d04545c7005da0b77a98c21b0bd28f6d1cdfa11:0
+[  774048ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://ruyia6tg3f2q4vzs.jitda.io/hub/static/components/bootstrap/dist/js/bootstrap.bundle.min.js?v=1ef3a326b7703690db9062481b664da83955a8ca3beea6ece0c7b871a8741e80eb7e1adb03ef12065667d4aaef010c3b7082cb3c526f770220a61cd098c9be3f:0
+[  774050ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://ruyia6tg3f2q4vzs.jitda.io/hub/static/components/jquery/dist/jquery.min.js?v=bf6089ed4698cb8270a8b0c8ad9508ff886a7a842278e98064d5c1790ca3a36d5d69d9f047ef196882554fc104da2c88eb5395f1ee8cf0f3f6ff8869408350fe:0
+[  774137ms] ReferenceError: require is not defined
+    at https://ruyia6tg3f2q4vzs.jitda.io/:34:7
