@@ -55,7 +55,7 @@
     .login-description { margin: 9px 0 27px; color: var(--muted); font-size: 13px; line-height: 1.7; }
     .login-field { display: grid; gap: 8px; margin-top: 16px; }
     .login-field label { font-size: 12px; font-weight: 700; }
-    .login-field input { width: 100%; height: 46px; border: 1px solid #dedfe8; border-radius: 9px; background: #fff; padding: 0 13px; color: var(--ink); font-size: 14px; }
+    .login-field input, .login-field select { width: 100%; height: 46px; border: 1px solid #dedfe8; border-radius: 9px; background: #fff; padding: 0 13px; color: var(--ink); font-size: 14px; }
     .login-field input::placeholder { color: #a4a6b4; }
     .login-submit { width: 100%; min-height: 47px; margin-top: 21px; border: 0; border-radius: 9px; background: var(--purple); color: white; cursor: pointer; font-size: 13px; font-weight: 750; transition: background .18s, transform .18s; }
     .login-submit:hover { transform: translateY(-1px); background: var(--purple-dark); }
@@ -142,6 +142,10 @@
     .section-heading h2 { margin: 0; font-size: 19px; letter-spacing: -.5px; }
     .solved-section { margin-top: 31px; }
     .solved-heading-group { display: flex; align-items: center; gap: 10px; }
+    .section-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .tutor-generator { min-height: 39px; border: 1px solid #dcd9ff; border-radius: 8px; background: #f7f6ff; padding: 0 11px; color: #5145c4; cursor: pointer; font-size: 11px; font-weight: 700; }
+    .tutor-generator:hover { background: #eeecff; }
+    .tutor-generator:disabled { cursor: wait; opacity: .65; }
     .text-button { display: inline-flex; min-height: 40px; align-items: center; gap: 5px; border: 0; background: transparent; padding: 0 4px; color: var(--purple-dark); cursor: pointer; font-size: 12px; font-weight: 700; }
     .text-button svg { width: 15px; height: 15px; stroke: currentColor; }
     .problem-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 13px; }
@@ -362,9 +366,11 @@
       <button class="auth-switch" id="showSignup" type="button">처음이신가요? 학생 계정 만들기</button>
       <section class="signup-panel" id="signupPanel" aria-labelledby="loginTitle" hidden>
         <form id="signupForm" novalidate>
+          <div class="login-field"><label for="signupRole">계정 유형</label><select id="signupRole"><option value="student">학생</option><option value="teacher">선생님</option></select></div>
           <div class="login-field"><label for="signupId">아이디</label><input id="signupId" type="text" placeholder="영문 소문자·숫자 3~32자" autocomplete="username" autocapitalize="off" required></div>
           <div class="login-field"><label for="signupPassword">비밀번호</label><input id="signupPassword" type="password" placeholder="8자 이상" autocomplete="new-password" required></div>
           <div class="login-field"><label for="signupPasswordConfirm">비밀번호 확인</label><input id="signupPasswordConfirm" type="password" placeholder="비밀번호를 한 번 더 입력하세요" autocomplete="new-password" required></div>
+          <div class="login-field" id="teacherInviteField" hidden><label for="teacherInviteCode">교사 초대 코드</label><input id="teacherInviteCode" type="password" placeholder="교사에게 받은 초대 코드를 입력하세요" autocomplete="off"></div>
           <button class="login-submit" id="signupSubmit" type="submit">학생 계정 만들기</button>
           <p class="login-error" id="signupError" role="alert" hidden></p>
         </form>
@@ -430,9 +436,10 @@
           </section>
 
           <section aria-labelledby="problemsHeading">
-            <div class="section-heading"><h2 id="problemsHeading">아직 풀지 않은 문제</h2><button class="text-button" data-view="problems">전체 문제 보기 <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
+            <div class="section-heading"><h2 id="problemsHeading">아직 풀지 않은 문제</h2><div class="section-actions"><button class="tutor-generator" id="generateProblemButton" type="button" hidden>맞춤 연습 문제 만들기</button><button class="text-button" data-view="problems">전체 문제 보기 <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div></div>
             <div class="problem-tools" aria-label="난이도 필터"><button class="filter-chip active" data-filter="all">전체</button><button class="filter-chip" data-filter="쉬움">쉬움</button><button class="filter-chip" data-filter="보통">보통</button><button class="filter-chip" data-filter="도전">도전</button></div>
             <div class="problem-list" id="problemList"></div>
+            <p class="footer-note" id="generationMessage" role="status" hidden></p>
           </section>
 
           <section class="solved-section" aria-labelledby="solvedHeading">
@@ -452,7 +459,7 @@
         <section class="view" id="teacherView" aria-labelledby="teacherHeadingTitle">
           <div class="teacher-heading">
             <div><div class="eyebrow">CLASSROOM · 2학년 1반</div><h1 id="teacherHeadingTitle">수업의 흐름을 한눈에</h1><p class="welcome-sub">학생들의 문제 풀이와 제출 결과를 확인해 보세요.</p></div>
-            <div class="tutor-control"><div><strong>AI 튜터 힌트</strong><small id="tutorToggleText">학생에게 개념 힌트를 보여줍니다</small></div><button class="tutor-switch" id="tutorToggle" type="button" role="switch" aria-checked="true" aria-label="AI 튜터 힌트 켜기"></button></div>
+            <div class="tutor-control"><div><strong>AI 튜터 힌트</strong><small id="tutorToggleText">학생에게 힌트를 보여주지 않습니다</small></div><button class="tutor-switch" id="tutorToggle" type="button" role="switch" aria-checked="false" aria-label="AI 튜터 힌트 켜기"></button></div>
           </div>
 
           <section class="teacher-stats" aria-label="학급 요약">
@@ -499,12 +506,12 @@
                 <h2 id="solveTitle">두 수의 합 구하기</h2>
                 <div class="detail-meta"><span id="solveTopic">입출력</span><span>정답률 82%</span><span>예상 시간 5분</span></div>
                 <div class="detail-section"><h3>문제</h3><p id="solveDescription">두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.</p></div>
-                <div class="detail-section"><h3>입력</h3><p>첫째 줄에 두 정수 A와 B가 공백으로 구분되어 주어집니다.</p></div>
-                <div class="detail-section"><h3>출력</h3><p>두 정수 A와 B의 합을 출력합니다.</p></div>
+                <div class="detail-section"><h3>입력</h3><p id="solveInputDescription">첫째 줄에 두 정수 A와 B가 공백으로 구분되어 주어집니다.</p></div>
+                <div class="detail-section"><h3>출력</h3><p id="solveOutputDescription">두 정수 A와 B의 합을 출력합니다.</p></div>
                 <div class="detail-section"><h3>예제</h3><div class="sample-box"><div class="sample-label">입력</div><code id="sampleInput">3 5</code></div><div class="sample-box"><div class="sample-label">출력</div><code id="sampleOutput">8</code></div></div>
                 <details class="answer-menu"><summary>모범 답안 확인</summary><pre><code id="answerCode"></code></pre></details>
               </article>
-              <aside class="ai-card" id="tutorCard"><div class="ai-card-head"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 14.5 9.5 21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>AI 학습 힌트</div><p id="tutorHint">입력된 두 값을 정수로 바꾸고, 더한 결과를 출력하는 순서를 생각해 보세요.</p><span class="ai-control-note">개념을 떠올릴 수 있도록 힌트만 제공해요.</span></aside>
+              <aside class="ai-card" id="tutorCard" hidden><div class="ai-card-head"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 14.5 9.5 21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>AI 학습 힌트</div><p id="tutorHint"></p><span class="ai-control-note">정답 대신 다음 생각을 위한 힌트만 제공해요.</span></aside>
             </div>
             <div>
               <article class="editor-card">
@@ -515,7 +522,7 @@
               <div class="result-panel" id="resultPanel" role="status" aria-live="polite"><div class="result-title"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg><span id="resultTitle">채점 결과</span></div><p id="resultText"></p><div class="case-table-wrap" id="caseTableWrap" hidden><table class="case-table"><thead><tr><th>테스트</th><th>결과</th><th>내 출력</th><th>기대 출력</th></tr></thead><tbody id="caseRows"></tbody></table></div></div>
             </div>
           </div>
-          <p class="footer-note">코드는 브라우저의 격리 실행 환경에서 채점하며 서버로 전송하지 않습니다. 실행 시간은 최대 3초로 제한됩니다.</p>
+          <p class="footer-note">코드는 브라우저에서 채점합니다. AI 튜터가 켜져 있을 때 오답 코드 일부와 제출 결과는 힌트 생성을 위해 OpenAI로 전송됩니다.</p>
         </section>
       </div>
     </main>
@@ -530,13 +537,17 @@
       { id: "104", number: "PY-004", title: "가장 큰 수 찾기", topic: "리스트", level: "보통", rate: "58%", description: "세 정수가 주어집니다. 이 중 가장 큰 수를 출력해 주세요.", input: "4 9 2", output: "9", hint: "파이썬에서 여러 값 중 가장 큰 값을 구하는 방법을 떠올려 보세요.", solution: "numbers = list(map(int, input().split()))\nprint(max(numbers))", testCases: [{ input: "4 9 2", expected: "9" }, { input: "-5 -1 -3", expected: "-1" }, { input: "8 8 2", expected: "8" }] },
       { id: "105", number: "PY-005", title: "구구단 한 단 출력하기", topic: "반복문", level: "도전", rate: "41%", description: "정수 N이 주어집니다. N단의 결과를 1부터 9까지 한 줄씩 출력해 주세요.", input: "3", output: "3 x 1 = 3\n3 x 2 = 6\n...", hint: "곱하는 수가 1부터 9까지 바뀌는 반복을 만들 수 있을까요?", solution: "n = int(input())\nfor i in range(1, 10):\n    print(f\"{n} x {i} = {n * i}\")", testCases: [{ input: "2", expected: "2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18" }, { input: "3", expected: "3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15\n3 x 6 = 18\n3 x 7 = 21\n3 x 8 = 24\n3 x 9 = 27" }] }
     ];
+    const baseProblemCount = problems.length;
     const starterCode = "# 두 정수를 입력받아 합을 출력해 보세요.\n\n";
     let activeFilter = "all";
     let currentProblem = problems[0];
     let currentUser = null;
     let activeJudgeWorker = null;
     let judgeTimeoutId = null;
-    let tutorEnabled = localStorage.getItem("codeon-tutor-enabled") !== "false";
+    let tutorEnabled = false;
+    let tutorVisible = false;
+    let tutorRequestSequence = 0;
+    let recentTutorAttempt = null;
     let activeResultFilter = "all";
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -547,6 +558,39 @@
 
     function codeStorageKey(problemId, studentId = currentUser?.id) {
       return `codeon-code-${studentId || "guest"}-${problemId}`;
+    }
+
+    function generatedStorageKey(studentId = currentUser?.id) {
+      return `codeon-generated-problems-${studentId || "guest"}`;
+    }
+
+    function recentTutorStorageKey(studentId = currentUser?.id) {
+      return `codeon-recent-tutor-attempt-${studentId || "guest"}`;
+    }
+
+    function loadRecentTutorAttempt(studentId) {
+      if (!studentId) return null;
+      try {
+        return JSON.parse(localStorage.getItem(recentTutorStorageKey(studentId)) || "null");
+      } catch {
+        return null;
+      }
+    }
+
+    function restoreGeneratedProblems(studentId) {
+      problems.splice(baseProblemCount);
+      if (!studentId) return;
+      try {
+        const saved = JSON.parse(localStorage.getItem(generatedStorageKey(studentId)) || "[]");
+        const valid = saved.filter(problem => problem && problem.isGenerated && /^ai-[a-z0-9-]{1,80}$/.test(problem.id) && Array.isArray(problem.testCases) && problem.testCases.length >= 2);
+        problems.push(...valid);
+      } catch {
+        localStorage.removeItem(generatedStorageKey(studentId));
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[character]);
     }
 
     function loadSolvedProblems(studentId) {
@@ -566,7 +610,9 @@
       const filtered = problems.filter(problem => (activeFilter === "all" || problem.level === activeFilter) && `${problem.title} ${problem.topic} ${problem.number}`.toLowerCase().includes(query));
       const renderRows = (items, emptyMessage) => items.length ? items.map(problem => {
         const solved = solvedProblemIds.has(problem.id);
-        return `<article class="problem-row"><span class="problem-number">${problem.number}</span><div><div class="problem-title-line"><div class="problem-title">${problem.title}</div>${solved ? `<span class="problem-status">해결 완료</span>` : ""}</div><div class="problem-topic">${problem.topic}</div></div><span class="difficulty ${problem.level === "쉬움" ? "easy" : problem.level === "보통" ? "medium" : "hard"}">${problem.level}</span><span class="acceptance">정답률 ${problem.rate}</span><button class="solve-button" data-solve="${problem.id}">${solved ? "다시 풀기" : "문제 풀기"}</button></article>`;
+        const levelClass = problem.level === "쉬움" ? "easy" : problem.level === "보통" ? "medium" : "hard";
+        const rateLabel = problem.isGenerated ? "개인 맞춤" : `정답률 ${problem.rate}`;
+        return `<article class="problem-row"><span class="problem-number">${escapeHtml(problem.number)}</span><div><div class="problem-title-line"><div class="problem-title">${escapeHtml(problem.title)}</div>${solved ? `<span class="problem-status">해결 완료</span>` : ""}</div><div class="problem-topic">${escapeHtml(problem.topic)}</div></div><span class="difficulty ${levelClass}">${escapeHtml(problem.level)}</span><span class="acceptance">${escapeHtml(rateLabel)}</span><button class="solve-button" data-solve="${escapeHtml(problem.id)}">${solved ? "다시 풀기" : "문제 풀기"}</button></article>`;
       }).join("") : `<div class="empty-state">${emptyMessage}</div>`;
       const solved = filtered.filter(problem => solvedProblemIds.has(problem.id));
       const unsolved = filtered.filter(problem => !solvedProblemIds.has(problem.id));
@@ -616,7 +662,7 @@
       const student = user?.id ? {
         id: user.id,
         user_metadata: { full_name: user.id },
-        app_metadata: { role: "student" }
+        app_metadata: { role: user.role === "teacher" ? "teacher" : "student" }
       } : null;
       window.dispatchEvent(new CustomEvent("codeon:auth", { detail: { user: student } }));
     }
@@ -653,7 +699,22 @@
       toggle.setAttribute("aria-checked", String(tutorEnabled));
       toggle.setAttribute("aria-label", `AI 튜터 힌트 ${tutorEnabled ? "끄기" : "켜기"}`);
       $("#tutorToggleText").textContent = tutorEnabled ? "학생에게 개념 힌트를 보여줍니다" : "학생에게 힌트를 보여주지 않습니다";
-      $("#tutorCard").hidden = !tutorEnabled;
+      $("#tutorCard").hidden = !tutorEnabled || !tutorVisible;
+      $("#generateProblemButton").hidden = !tutorEnabled || currentUser?.app_metadata?.role !== "student";
+    }
+
+    async function refreshTutorSetting(studentId = currentUser?.id) {
+      try {
+        const response = await fetch("/api/tutor/settings", { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) throw new Error("settings unavailable");
+        const setting = await response.json();
+        if (currentUser?.id !== studentId) return;
+        tutorEnabled = Boolean(setting.enabled);
+      } catch {
+        if (currentUser?.id !== studentId) return;
+        tutorEnabled = false;
+      }
+      syncTutorSetting();
     }
 
     function filterTeacherRows() {
@@ -669,15 +730,28 @@
 
     function openProblem(id) {
       currentProblem = problems.find(problem => problem.id === id) || problems[0];
+      tutorVisible = false;
+      tutorRequestSequence++;
+      syncTutorSetting();
       $("#solveTitle").textContent = currentProblem.title;
       $("#solveDifficulty").textContent = currentProblem.level;
       $("#solveDifficulty").className = `difficulty ${currentProblem.level === "쉬움" ? "easy" : currentProblem.level === "보통" ? "medium" : "hard"}`;
       $("#solveTopic").textContent = currentProblem.topic;
       $("#solveDescription").textContent = currentProblem.description;
+      const ioDescriptions = {
+        "101": ["첫째 줄에 두 정수 A와 B가 공백으로 구분되어 주어집니다.", "두 정수 A와 B의 합을 출력합니다."],
+        "102": ["첫째 줄에 정수 N이 주어집니다.", "N이 짝수이면 '짝수', 홀수이면 '홀수'를 출력합니다."],
+        "103": ["첫째 줄에 정수 N이 주어집니다.", "1개부터 N개까지 별을 한 줄씩 출력합니다."],
+        "104": ["첫째 줄에 세 정수가 공백으로 구분되어 주어집니다.", "세 정수 중 가장 큰 수를 출력합니다."],
+        "105": ["첫째 줄에 정수 N이 주어집니다.", "N단의 구구단을 1단부터 9단까지 출력합니다."]
+      };
+      $("#solveInputDescription").textContent = currentProblem.inputDescription || ioDescriptions[currentProblem.id]?.[0] || "문제에 제시된 입력 형식을 확인해 주세요.";
+      $("#solveOutputDescription").textContent = currentProblem.outputDescription || ioDescriptions[currentProblem.id]?.[1] || "문제에서 요구하는 형식으로 결과를 출력해 주세요.";
       $("#sampleInput").textContent = currentProblem.input;
       $("#sampleOutput").textContent = currentProblem.output;
-      $("#tutorHint").textContent = currentProblem.hint;
-      $("#answerCode").textContent = currentProblem.solution;
+      $("#tutorHint").textContent = "";
+      $("#answerCode").textContent = currentProblem.solution || "이 맞춤 문제에는 모범 답안이 제공되지 않습니다.";
+      $(".answer-menu").hidden = Boolean(currentProblem.isGenerated);
       $(".answer-menu").open = false;
       $("#codeInput").value = localStorage.getItem(codeStorageKey(id)) ?? starterCode;
       $("#resultPanel").classList.remove("show");
@@ -691,6 +765,100 @@
       notice.classList.add("show");
       clearTimeout(toast.timer);
       toast.timer = setTimeout(() => notice.classList.remove("show"), 2400);
+    }
+
+    async function requestPassiveHint(result) {
+      if (!tutorEnabled || currentUser?.app_metadata?.role !== "student") return;
+      const requestId = ++tutorRequestSequence;
+      const problem = currentProblem;
+      const failedCase = result.results?.find(testCase => !testCase.passed);
+      tutorVisible = true;
+      syncTutorSetting();
+      $("#tutorHint").textContent = "제출 결과를 살펴보고 다음 생각을 위한 힌트를 준비하고 있어요.";
+      try {
+        const response = await fetch("/api/tutor/hint", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: problem.title,
+            topic: problem.topic,
+            level: problem.level,
+            description: problem.description,
+            status: result.status,
+            error: failedCase?.error || "",
+            failedOutput: failedCase?.output || "",
+            studentCode: $("#codeInput").value
+          })
+        });
+        const data = await response.json();
+        if (requestId !== tutorRequestSequence) return;
+        if (response.status === 403) {
+          tutorEnabled = false;
+          tutorVisible = false;
+          syncTutorSetting();
+          return;
+        }
+        if (!response.ok) throw new Error(data.error || "힌트를 가져오지 못했습니다.");
+        $("#tutorHint").textContent = data.hint;
+      } catch {
+        if (requestId === tutorRequestSequence && tutorEnabled) {
+          $("#tutorHint").textContent = "지금은 힌트를 불러오지 못했어요. 문제 설명과 예제 입력을 다시 살펴보세요.";
+        }
+      }
+    }
+
+    async function generatePersonalizedProblem() {
+      const button = $("#generateProblemButton");
+      if (!tutorEnabled || button.disabled) return;
+      const topic = currentProblem?.topic || problems.find(problem => !solvedProblemIds.has(problem.id))?.topic || "입출력";
+      button.disabled = true;
+      button.textContent = "문제를 만들고 있어요...";
+      $("#generationMessage").hidden = false;
+      $("#generationMessage").textContent = "현재 풀이 기록에 맞는 연습 문제를 만들고 있습니다.";
+      try {
+        const response = await fetch("/api/tutor/problem", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            topic,
+            solvedCount: solvedProblemIds.size,
+            recentDifficulty: recentTutorAttempt?.level || "",
+            recentResult: recentTutorAttempt?.status || ""
+          })
+        });
+        const data = await response.json();
+        if (response.status === 403) {
+          tutorEnabled = false;
+          syncTutorSetting();
+          throw new Error("AI 튜터가 선생님에 의해 꺼져 있습니다.");
+        }
+        if (!response.ok) throw new Error(data.error || "문제를 만들지 못했습니다.");
+        const generated = {
+          ...data.problem,
+          id: `ai-${crypto.randomUUID()}`,
+          number: `AI-${String(problems.length - baseProblemCount + 1).padStart(2, "0")}`,
+          rate: "맞춤형",
+          input: data.problem.sampleInput,
+          output: data.problem.sampleOutput,
+          solution: "",
+          isGenerated: true
+        };
+        problems.push(generated);
+        localStorage.setItem(generatedStorageKey(), JSON.stringify(problems.slice(baseProblemCount)));
+        renderProblems();
+        renderLearningSummary();
+        $("#generationMessage").textContent = "맞춤 연습 문제를 만들었어요. 코드를 작성해 제출해 보세요.";
+        openProblem(generated.id);
+      } catch (error) {
+        $("#generationMessage").hidden = false;
+        $("#generationMessage").textContent = error.message || "문제를 만들지 못했어요. 잠시 후 다시 시도해 주세요.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "맞춤 연습 문제 만들기";
+        syncTutorSetting();
+      }
     }
 
     function updateLineNumbers() {
@@ -724,6 +892,8 @@
       const message = runtimeError
         ? `${passedCount}개 테스트를 통과한 뒤 실행 오류가 발생했습니다: ${runtimeError.error}`
         : `테스트 ${passedCount} / ${result.total}개를 통과했습니다.`;
+      recentTutorAttempt = { topic: currentProblem.topic, level: currentProblem.level, status: result.status };
+      localStorage.setItem(recentTutorStorageKey(), JSON.stringify(recentTutorAttempt));
       if (result.status === "accepted" && !solvedProblemIds.has(currentProblem.id)) {
         solvedProblemIds.add(currentProblem.id);
         localStorage.setItem(solvedStorageKey(), JSON.stringify([...solvedProblemIds]));
@@ -750,6 +920,7 @@
       });
       $("#caseRows").replaceChildren(...rows);
       $("#caseTableWrap").hidden = false;
+      if (result.status !== "accepted") requestPassiveHint(result);
     }
 
     function submitForJudging() {
@@ -764,6 +935,9 @@
       }
 
       localStorage.setItem(codeStorageKey(currentProblem.id), source);
+      tutorVisible = false;
+      tutorRequestSequence++;
+      syncTutorSetting();
       $("#submitCode").disabled = true;
       showJudgeState("processing", "채점 준비 중", "브라우저에서 파이썬 실행 환경을 불러오고 있습니다.");
       try {
@@ -787,6 +961,9 @@
           judgeTimeoutId = setTimeout(() => {
             finishJudge();
             showJudgeState("time-limit", "시간 초과", "실행이 3초를 넘어 자동으로 중단됐습니다.");
+            recentTutorAttempt = { topic: currentProblem.topic, level: currentProblem.level, status: "time_limit" };
+            localStorage.setItem(recentTutorStorageKey(), JSON.stringify(recentTutorAttempt));
+            requestPassiveHint({ status: "time_limit", results: [] });
           }, 3000);
           return;
         }
@@ -835,13 +1012,21 @@
       const viewName = { homeView: "home", problemView: "problems", solveView: "solve", teacherView: "teacher" }[currentView] || "home";
       currentUser = event.detail?.user || null;
       if (!currentUser) {
+        restoreGeneratedProblems(null);
         solvedProblemIds = new Set();
+        recentTutorAttempt = null;
+        tutorRequestSequence++;
+        tutorEnabled = false;
+        tutorVisible = false;
+        syncTutorSetting();
         $("#loginScreen").hidden = false;
         $("#appRoot").hidden = true;
         $("#teacherNavSection").hidden = true;
         return;
       }
+      restoreGeneratedProblems(currentUser.id);
       solvedProblemIds = loadSolvedProblems(currentUser.id);
+      recentTutorAttempt = loadRecentTutorAttempt(currentUser.id);
       $("#loginError").hidden = true;
       $("#loginScreen").hidden = true;
       $("#appRoot").hidden = false;
@@ -849,24 +1034,32 @@
       renderProblems();
       renderLearningSummary();
       showView(wasSignedIn ? viewName : "home");
+      refreshTutorSetting();
     });
     window.addEventListener("codeon:notice", event => toast(event.detail?.message || "요청을 완료하지 못했어요."));
 
     function setAuthMode(mode) {
       const isSignup = mode === "signup";
-      $("#loginTitle").textContent = isSignup ? "학생 계정 만들기" : "학생 로그인";
+      const isTeacherSignup = isSignup && $("#signupRole").value === "teacher";
+      $("#loginTitle").textContent = isSignup ? isTeacherSignup ? "선생님 계정 만들기" : "학생 계정 만들기" : "학생 로그인";
       $("#loginDescription").textContent = isSignup
-        ? "아이디와 비밀번호를 정하면 바로 문제를 풀 수 있어요."
+        ? isTeacherSignup ? "교사 초대 코드를 확인해 선생님 계정을 만듭니다." : "아이디와 비밀번호를 정하면 바로 문제를 풀 수 있어요."
         : "아이디와 비밀번호로 로그인해 문제 풀이를 시작하세요.";
       $("#loginForm").hidden = isSignup;
       $("#showSignup").hidden = isSignup;
       $("#signupPanel").hidden = !isSignup;
+      $("#teacherInviteField").hidden = !isTeacherSignup;
+      $("#signupSubmit").textContent = isTeacherSignup ? "선생님 계정 만들기" : "학생 계정 만들기";
       $("#loginError").hidden = true;
       $("#signupError").hidden = true;
     }
 
-    $("#showSignup").addEventListener("click", () => setAuthMode("signup"));
+    $("#showSignup").addEventListener("click", () => {
+      $("#signupRole").value = "student";
+      setAuthMode("signup");
+    });
     $("#showLogin").addEventListener("click", () => setAuthMode("login"));
+    $("#signupRole").addEventListener("change", () => setAuthMode("signup"));
     $("#loginForm").addEventListener("submit", event => {
       event.preventDefault();
       submitAuth("/api/auth/login", {
@@ -884,7 +1077,9 @@
       }
       submitAuth("/api/auth/signup", {
         id: $("#signupId").value.trim(),
-        password
+        password,
+        role: $("#signupRole").value,
+        inviteCode: $("#signupRole").value === "teacher" ? $("#teacherInviteCode").value : ""
       }, "#signupError", "#signupSubmit");
     });
     $("#logoutButton").addEventListener("click", async () => {
@@ -905,12 +1100,32 @@
     $("#searchInput").addEventListener("input", renderProblems);
     $("#teacherSearch").addEventListener("input", filterTeacherRows);
     $("#resultSearch").addEventListener("input", filterTeacherRows);
-    $("#tutorToggle").addEventListener("click", () => {
-      tutorEnabled = !tutorEnabled;
-      localStorage.setItem("codeon-tutor-enabled", String(tutorEnabled));
-      syncTutorSetting();
-      toast(tutorEnabled ? "학생 화면에 AI 힌트를 켰어요." : "학생 화면의 AI 힌트를 껐어요.");
+    $("#tutorToggle").addEventListener("click", async () => {
+      const toggle = $("#tutorToggle");
+      toggle.disabled = true;
+      try {
+        const response = await fetch("/api/tutor/settings", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ enabled: !tutorEnabled })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "설정을 저장하지 못했습니다.");
+        tutorEnabled = result.enabled;
+        if (!tutorEnabled) {
+          tutorVisible = false;
+          tutorRequestSequence++;
+        }
+        syncTutorSetting();
+        toast(tutorEnabled ? "학생 화면에 AI 튜터를 켰어요." : "학생 화면의 AI 튜터를 껐어요.");
+      } catch (error) {
+        toast(error.message || "AI 튜터 설정을 저장하지 못했습니다.");
+      } finally {
+        toggle.disabled = false;
+      }
     });
+    $("#generateProblemButton").addEventListener("click", generatePersonalizedProblem);
     $("#backHome").addEventListener("click", () => showView("home"));
     $("#backToProblems").addEventListener("click", () => showView("problems"));
     $("#noticeButton").addEventListener("click", () => toast("새로운 알림이 없어요."));
