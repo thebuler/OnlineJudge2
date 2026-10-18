@@ -1,2 +1,19 @@
 [      51ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
 [    9703ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  308718ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  308725ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://ruyia6tg3f2q4vzs.jitda.io/:821:19
+[  331129ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  331196ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://ruyia6tg3f2q4vzs.jitda.io/:829:19
+[  346496ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  346506ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://ruyia6tg3f2q4vzs.jitda.io/:829:19
+[  353704ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  353712ms] TypeError: Cannot read properties of null (reading 'addEventListener')
+    at https://ruyia6tg3f2q4vzs.jitda.io/:854:19
+[  366416ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  385141ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  394811ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  394821ms] [ERROR] WebSocket connection to 'wss://ruyia6tg3f2q4vzs.jitda.io/' failed: Error during WebSocket handshake: Unexpected response code: 503 @ https://ruyia6tg3f2q4vzs.jitda.io/@vite/client:1034
+[  396095ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1

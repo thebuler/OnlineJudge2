@@ -60,11 +60,10 @@
     .login-submit { width: 100%; min-height: 47px; margin-top: 21px; border: 0; border-radius: 9px; background: var(--purple); color: white; cursor: pointer; font-size: 13px; font-weight: 750; transition: background .18s, transform .18s; }
     .login-submit:hover { transform: translateY(-1px); background: var(--purple-dark); }
     .login-error { margin: 12px 0 0; border-radius: 8px; background: #fff0f0; padding: 10px 12px; color: #ae4141; font-size: 12px; line-height: 1.5; }
-    .demo-login { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 17px; border: 1px solid #ececf2; border-radius: 9px; background: #fafafd; padding: 12px; }
-    .demo-login-label { color: #777b91; font-size: 11px; line-height: 1.6; }
-    .demo-login-label strong { color: #45495f; font-weight: 700; }
-    .demo-fill { min-height: 34px; flex: none; border: 1px solid #dddafe; border-radius: 7px; background: white; padding: 0 9px; color: var(--purple-dark); cursor: pointer; font-size: 10px; font-weight: 700; }
-    .login-footnote { margin-top: 17px; color: #999cab; font-size: 10px; line-height: 1.7; text-align: center; }
+    .auth-switch { display: block; min-height: 44px; margin: 9px auto 0; border: 0; background: transparent; padding: 0 10px; color: var(--purple-dark); cursor: pointer; font-size: 12px; font-weight: 700; }
+    .auth-switch:hover { text-decoration: underline; }
+    .signup-panel { margin-top: 8px; }
+    .login-footnote { margin-top: 16px; color: #999cab; font-size: 10px; line-height: 1.7; text-align: center; }
     .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 5; display: flex; width: 238px; flex-direction: column; border-right: 1px solid var(--line); background: var(--paper); padding: 28px 16px 20px; }
     .brand { display: flex; align-items: center; gap: 10px; margin: 0 10px 37px; color: var(--ink); font-size: 21px; font-weight: 800; letter-spacing: -.8px; }
     .brand-mark { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 11px; background: var(--purple); color: white; }
@@ -353,15 +352,25 @@
       <div class="login-story-foot">새솔중학교 · 파이썬 문제 풀이 공간</div>
     </div>
     <div class="login-panel"><div class="login-card">
-      <div class="eyebrow">STUDENT SPACE</div><h2 id="loginTitle">학생 로그인</h2><p class="login-description">학번과 비밀번호를 입력해 문제 풀이를 시작하세요.</p>
+      <div class="eyebrow">STUDENT SPACE</div><h2 id="loginTitle">학생 로그인</h2><p class="login-description" id="loginDescription">아이디와 비밀번호로 로그인해 문제 풀이를 시작하세요.</p>
       <form id="loginForm" novalidate>
-        <div class="login-field"><label for="studentId">학번</label><input id="studentId" name="username" type="text" placeholder="학번을 입력하세요" autocomplete="username" required></div>
+        <div class="login-field"><label for="studentId">아이디</label><input id="studentId" name="username" type="text" placeholder="아이디를 입력하세요" autocomplete="username" autocapitalize="off" required></div>
         <div class="login-field"><label for="studentPassword">비밀번호</label><input id="studentPassword" name="password" type="password" placeholder="비밀번호를 입력하세요" autocomplete="current-password" required></div>
-        <button class="login-submit" type="submit">로그인</button>
-        <p class="login-error" id="loginError" role="alert" hidden>학번 또는 비밀번호를 다시 확인해 주세요.</p>
+        <button class="login-submit" id="loginSubmit" type="submit">로그인</button>
+        <p class="login-error" id="loginError" role="alert" hidden>아이디 또는 비밀번호를 다시 확인해 주세요.</p>
       </form>
-      <div class="demo-login"><div class="demo-login-label">체험용 계정<br><strong>student01 / python123</strong></div><button class="demo-fill" id="fillDemo" type="button">계정 입력</button></div>
-      <p class="login-footnote">이 로그인은 화면 체험용으로, 입력값은 이 웹페이지 안에서만 확인합니다. 실제 계정 보안 기능은 제공하지 않습니다.</p>
+      <button class="auth-switch" id="showSignup" type="button">처음이신가요? 학생 계정 만들기</button>
+      <section class="signup-panel" id="signupPanel" aria-labelledby="loginTitle" hidden>
+        <form id="signupForm" novalidate>
+          <div class="login-field"><label for="signupId">아이디</label><input id="signupId" type="text" placeholder="영문 소문자·숫자 3~32자" autocomplete="username" autocapitalize="off" required></div>
+          <div class="login-field"><label for="signupPassword">비밀번호</label><input id="signupPassword" type="password" placeholder="8자 이상" autocomplete="new-password" required></div>
+          <div class="login-field"><label for="signupPasswordConfirm">비밀번호 확인</label><input id="signupPasswordConfirm" type="password" placeholder="비밀번호를 한 번 더 입력하세요" autocomplete="new-password" required></div>
+          <button class="login-submit" id="signupSubmit" type="submit">학생 계정 만들기</button>
+          <p class="login-error" id="signupError" role="alert" hidden></p>
+        </form>
+        <button class="auth-switch" id="showLogin" type="button">이미 계정이 있나요? 로그인</button>
+      </section>
+      <p class="login-footnote">계정은 CSV 파일에 저장됩니다. 비밀번호 원문은 저장하지 않고 salt를 더해 해시한 값만 기록합니다.</p>
     </div></div>
   </section>
 
@@ -527,22 +536,30 @@
     let currentUser = null;
     let activeJudgeWorker = null;
     let judgeTimeoutId = null;
-    const solvedStorageKey = "codeon-solved-problems-student01";
     let tutorEnabled = localStorage.getItem("codeon-tutor-enabled") !== "false";
     let activeResultFilter = "all";
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-    function loadSolvedProblems() {
+    function solvedStorageKey(studentId = currentUser?.id) {
+      return `codeon-solved-problems-${studentId || "guest"}`;
+    }
+
+    function codeStorageKey(problemId, studentId = currentUser?.id) {
+      return `codeon-code-${studentId || "guest"}-${problemId}`;
+    }
+
+    function loadSolvedProblems(studentId) {
+      if (!studentId) return new Set();
       try {
-        const saved = JSON.parse(localStorage.getItem(solvedStorageKey) || "[]");
+        const saved = JSON.parse(localStorage.getItem(solvedStorageKey(studentId)) || "[]");
         return new Set(saved.filter(id => problems.some(problem => problem.id === id)));
       } catch {
         return new Set();
       }
     }
 
-    let solvedProblemIds = loadSolvedProblems();
+    let solvedProblemIds = new Set();
 
     function renderProblems() {
       const query = $("#searchInput").value.trim().toLowerCase();
@@ -595,15 +612,40 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function setDemoSession(signedIn) {
-      const user = signedIn ? {
-        email: "student01@demo.codeon",
-        user_metadata: { full_name: "김민서" },
+    function setStudentAuth(user) {
+      const student = user?.id ? {
+        id: user.id,
+        user_metadata: { full_name: user.id },
         app_metadata: { role: "student" }
       } : null;
-      if (signedIn) sessionStorage.setItem("codeon-demo-student", "student01");
-      else sessionStorage.removeItem("codeon-demo-student");
-      window.dispatchEvent(new CustomEvent("codeon:auth", { detail: { user } }));
+      window.dispatchEvent(new CustomEvent("codeon:auth", { detail: { user: student } }));
+    }
+
+    async function submitAuth(endpoint, credentials, errorSelector, buttonSelector) {
+      const errorElement = $(errorSelector);
+      const submitButton = $(buttonSelector);
+      submitButton.disabled = true;
+      errorElement.hidden = true;
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials)
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          errorElement.textContent = result.error || "요청을 처리하지 못했습니다.";
+          errorElement.hidden = false;
+          return;
+        }
+        setStudentAuth(result.user);
+      } catch {
+        errorElement.textContent = "서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.";
+        errorElement.hidden = false;
+      } finally {
+        submitButton.disabled = false;
+      }
     }
 
     function syncTutorSetting() {
@@ -637,7 +679,7 @@
       $("#tutorHint").textContent = currentProblem.hint;
       $("#answerCode").textContent = currentProblem.solution;
       $(".answer-menu").open = false;
-      $("#codeInput").value = localStorage.getItem(`codeon-code-${id}`) ?? starterCode;
+      $("#codeInput").value = localStorage.getItem(codeStorageKey(id)) ?? starterCode;
       $("#resultPanel").classList.remove("show");
       showView("solve");
       updateLineNumbers();
@@ -684,7 +726,7 @@
         : `테스트 ${passedCount} / ${result.total}개를 통과했습니다.`;
       if (result.status === "accepted" && !solvedProblemIds.has(currentProblem.id)) {
         solvedProblemIds.add(currentProblem.id);
-        localStorage.setItem(solvedStorageKey, JSON.stringify([...solvedProblemIds]));
+        localStorage.setItem(solvedStorageKey(), JSON.stringify([...solvedProblemIds]));
         renderProblems();
         renderLearningSummary();
       }
@@ -721,7 +763,7 @@
         return;
       }
 
-      localStorage.setItem(`codeon-code-${currentProblem.id}`, source);
+      localStorage.setItem(codeStorageKey(currentProblem.id), source);
       $("#submitCode").disabled = true;
       showJudgeState("processing", "채점 준비 중", "브라우저에서 파이썬 실행 환경을 불러오고 있습니다.");
       try {
@@ -793,38 +835,71 @@
       const viewName = { homeView: "home", problemView: "problems", solveView: "solve", teacherView: "teacher" }[currentView] || "home";
       currentUser = event.detail?.user || null;
       if (!currentUser) {
+        solvedProblemIds = new Set();
         $("#loginScreen").hidden = false;
         $("#appRoot").hidden = true;
         $("#teacherNavSection").hidden = true;
         return;
       }
+      solvedProblemIds = loadSolvedProblems(currentUser.id);
       $("#loginError").hidden = true;
       $("#loginScreen").hidden = true;
       $("#appRoot").hidden = false;
-      const isTeacher = currentUser.app_metadata?.role === "teacher";
-      $("#teacherNavSection").hidden = !isTeacher;
+      $("#teacherNavSection").hidden = currentUser.app_metadata?.role !== "teacher";
+      renderProblems();
+      renderLearningSummary();
       showView(wasSignedIn ? viewName : "home");
     });
     window.addEventListener("codeon:notice", event => toast(event.detail?.message || "요청을 완료하지 못했어요."));
-    $("#fillDemo").addEventListener("click", () => {
-      $("#studentId").value = "student01";
-      $("#studentPassword").value = "python123";
+
+    function setAuthMode(mode) {
+      const isSignup = mode === "signup";
+      $("#loginTitle").textContent = isSignup ? "학생 계정 만들기" : "학생 로그인";
+      $("#loginDescription").textContent = isSignup
+        ? "아이디와 비밀번호를 정하면 바로 문제를 풀 수 있어요."
+        : "아이디와 비밀번호로 로그인해 문제 풀이를 시작하세요.";
+      $("#loginForm").hidden = isSignup;
+      $("#showSignup").hidden = isSignup;
+      $("#signupPanel").hidden = !isSignup;
       $("#loginError").hidden = true;
-      $("#studentPassword").focus();
-    });
+      $("#signupError").hidden = true;
+    }
+
+    $("#showSignup").addEventListener("click", () => setAuthMode("signup"));
+    $("#showLogin").addEventListener("click", () => setAuthMode("login"));
     $("#loginForm").addEventListener("submit", event => {
       event.preventDefault();
-      const valid = $("#studentId").value.trim() === "student01" && $("#studentPassword").value === "python123";
-      if (!valid) {
-        $("#loginError").textContent = "학번 또는 비밀번호를 다시 확인해 주세요.";
-        $("#loginError").hidden = false;
+      submitAuth("/api/auth/login", {
+        id: $("#studentId").value.trim(),
+        password: $("#studentPassword").value
+      }, "#loginError", "#loginSubmit");
+    });
+    $("#signupForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const password = $("#signupPassword").value;
+      if (password !== $("#signupPasswordConfirm").value) {
+        $("#signupError").textContent = "비밀번호가 서로 달라요. 다시 확인해 주세요.";
+        $("#signupError").hidden = false;
         return;
       }
-      setDemoSession(true);
+      submitAuth("/api/auth/signup", {
+        id: $("#signupId").value.trim(),
+        password
+      }, "#signupError", "#signupSubmit");
     });
-    $("#logoutButton").addEventListener("click", () => {
+    $("#logoutButton").addEventListener("click", async () => {
+      try {
+        const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
+        if (!response.ok) throw new Error("logout failed");
+        setStudentAuth(null);
+      } catch {
+        toast("로그아웃하지 못했어요. 다시 시도해 주세요.");
+      }
       $("#studentPassword").value = "";
-      setDemoSession(false);
+      $("#signupPassword").value = "";
+      $("#signupPasswordConfirm").value = "";
+      if (!$("#appRoot").hidden) return;
+      setAuthMode("login");
       $("#studentId").focus();
     });
     $("#searchInput").addEventListener("input", renderProblems);
@@ -849,7 +924,7 @@
       }
     });
     $("#saveCode").addEventListener("click", () => {
-      localStorage.setItem(`codeon-code-${currentProblem.id}`, $("#codeInput").value);
+      localStorage.setItem(codeStorageKey(currentProblem.id), $("#codeInput").value);
       toast("작성한 코드가 이 기기에 임시 저장됐어요.");
     });
     $("#resetCode").addEventListener("click", () => {
@@ -866,7 +941,10 @@
     syncTutorSetting();
     filterTeacherRows();
     $("#todayLabel").textContent = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" }).format(new Date());
-    if (sessionStorage.getItem("codeon-demo-student") === "student01") setDemoSession(true);
+    fetch("/api/auth/me", { credentials: "same-origin" })
+      .then(response => response.ok ? response.json() : Promise.reject(new Error("session unavailable")))
+      .then(result => setStudentAuth(result.user))
+      .catch(() => setStudentAuth(null));
   </script>
 </body>
 </html>
