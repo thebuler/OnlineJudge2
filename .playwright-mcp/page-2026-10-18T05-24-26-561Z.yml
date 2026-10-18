@@ -1,0 +1,167 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "주 메뉴" [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e6]
+        - generic [ref=e8]: 코드온
+      - paragraph [ref=e9]: 학습 메뉴
+      - navigation [ref=e10]:
+        - button "나의 학습" [ref=e11] [cursor=pointer]:
+          - img [ref=e12]
+          - generic [ref=e14]: 나의 학습
+        - button "문제 목록 12" [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+          - generic [ref=e18]: 문제 목록
+          - generic [ref=e19]: "12"
+        - button "제출 기록" [ref=e20] [cursor=pointer]:
+          - img [ref=e21]
+          - generic [ref=e23]: 제출 기록
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]: 이번 주 학습
+            - generic [ref=e28]: 4일 연속
+          - generic "이번 주 7일 중 4일 학습" [ref=e29]:
+            - generic [ref=e30]:
+              - generic [ref=e31]: ✓
+              - generic [ref=e32]: 월
+            - generic [ref=e33]:
+              - generic [ref=e34]: ✓
+              - generic [ref=e35]: 화
+            - generic [ref=e36]:
+              - generic [ref=e37]: ✓
+              - generic [ref=e38]: 수
+            - generic [ref=e39]:
+              - generic [ref=e40]: ✓
+              - generic [ref=e41]: 목
+            - generic [ref=e42]:
+              - generic [ref=e43]: ·
+              - generic [ref=e44]: 금
+            - generic [ref=e45]:
+              - generic [ref=e46]: ·
+              - generic [ref=e47]: 토
+            - generic [ref=e48]:
+              - generic [ref=e49]: ·
+              - generic [ref=e50]: 일
+        - generic [ref=e51]:
+          - generic [ref=e52]: 김
+          - generic [ref=e53]:
+            - generic [ref=e54]: 김민서
+            - generic [ref=e55]: student01@demo.codeon
+          - button "로그아웃" [ref=e56] [cursor=pointer]:
+            - img [ref=e57]
+            - generic [ref=e60]: 나가기
+    - main [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - text: 학생 공간 /
+          - strong [ref=e64]: 나의 학습
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - img [ref=e67]
+            - searchbox "문제 검색" [ref=e70]
+          - button "알림 보기" [ref=e71] [cursor=pointer]:
+            - img [ref=e72]
+      - generic [ref=e74]:
+        - region "김민서님, 오늘도 한 문제씩!" [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]:
+              - generic [ref=e78]: 오늘의 학습 기록
+              - heading "김민서님, 오늘도 한 문제씩!" [level=1] [ref=e79]
+              - paragraph [ref=e80]: 작은 문제를 풀다 보면 어느새 큰 실력이 돼요.
+            - generic [ref=e81]: 2026년 10월 18일 일요일
+          - region "두 수의 합 구하기" [ref=e82]:
+            - generic [ref=e83]:
+              - generic [ref=e84]:
+                - img [ref=e85]
+                - text: 오늘의 추천 문제
+              - heading "두 수의 합 구하기" [level=2] [ref=e87]
+              - paragraph [ref=e88]: 두 정수 A와 B를 입력받아, A와 B의 합을 출력하는 프로그램을 작성해 주세요.
+              - button "문제 풀기" [ref=e89] [cursor=pointer]:
+                - text: 문제 풀기
+                - img [ref=e90]
+            - generic [ref=e93]:
+              - generic [ref=e98]:
+                - generic [ref=e99]: "1"
+                - generic [ref=e100]: a, b = map(int, input().split())
+              - generic [ref=e101]:
+                - generic [ref=e102]: "2"
+                - generic [ref=e103]: print(a + b)
+          - region "나의 학습 통계" [ref=e104]:
+            - article [ref=e105]:
+              - img [ref=e107]
+              - generic [ref=e109]:
+                - generic [ref=e110]: 해결한 문제
+                - generic [ref=e111]: 0/ 5문제
+            - article [ref=e112]:
+              - img [ref=e114]
+              - generic [ref=e117]:
+                - generic [ref=e118]: 남은 문제
+                - generic [ref=e119]: 5문제
+            - article [ref=e120]:
+              - img [ref=e122]
+              - generic [ref=e124]:
+                - generic [ref=e125]: 다음 학습 단원
+                - generic [ref=e126]: 입출력추천
+          - region "아직 풀지 않은 문제" [ref=e127]:
+            - generic [ref=e128]:
+              - heading "아직 풀지 않은 문제" [level=2] [ref=e129]
+              - button "전체 문제 보기" [ref=e130] [cursor=pointer]:
+                - text: 전체 문제 보기
+                - img [ref=e131]
+            - generic "난이도 필터" [ref=e133]:
+              - button "전체" [ref=e134] [cursor=pointer]
+              - button "쉬움" [ref=e135] [cursor=pointer]
+              - button "보통" [ref=e136] [cursor=pointer]
+              - button "도전" [ref=e137] [cursor=pointer]
+            - generic [ref=e138]:
+              - article [ref=e139]:
+                - generic [ref=e140]: PY-001
+                - generic [ref=e141]:
+                  - generic [ref=e143]: 두 수의 합 구하기
+                  - generic [ref=e144]: 입출력
+                - generic [ref=e145]: 쉬움
+                - generic [ref=e146]: 정답률 82%
+                - button "문제 풀기" [ref=e147] [cursor=pointer]
+              - article [ref=e148]:
+                - generic [ref=e149]: PY-002
+                - generic [ref=e150]:
+                  - generic [ref=e152]: 짝수일까요?
+                  - generic [ref=e153]: 조건문
+                - generic [ref=e154]: 쉬움
+                - generic [ref=e155]: 정답률 76%
+                - button "문제 풀기" [ref=e156] [cursor=pointer]
+              - article [ref=e157]:
+                - generic [ref=e158]: PY-003
+                - generic [ref=e159]:
+                  - generic [ref=e161]: 별 계단 만들기
+                  - generic [ref=e162]: 반복문
+                - generic [ref=e163]: 보통
+                - generic [ref=e164]: 정답률 64%
+                - button "문제 풀기" [ref=e165] [cursor=pointer]
+              - article [ref=e166]:
+                - generic [ref=e167]: PY-004
+                - generic [ref=e168]:
+                  - generic [ref=e170]: 가장 큰 수 찾기
+                  - generic [ref=e171]: 리스트
+                - generic [ref=e172]: 보통
+                - generic [ref=e173]: 정답률 58%
+                - button "문제 풀기" [ref=e174] [cursor=pointer]
+              - article [ref=e175]:
+                - generic [ref=e176]: PY-005
+                - generic [ref=e177]:
+                  - generic [ref=e179]: 구구단 한 단 출력하기
+                  - generic [ref=e180]: 반복문
+                - generic [ref=e181]: 도전
+                - generic [ref=e182]: 정답률 41%
+                - button "문제 풀기" [ref=e183] [cursor=pointer]
+          - region "내가 푼 문제" [ref=e184]:
+            - generic [ref=e185]:
+              - generic [ref=e186]:
+                - heading "내가 푼 문제" [level=2] [ref=e187]
+                - generic [ref=e188]: "0"
+              - button "기록 모두 보기" [ref=e189] [cursor=pointer]
+            - generic [ref=e191]: 아직 해결한 문제가 없어요. 한 문제를 정답으로 풀면 여기에 표시됩니다.
+            - paragraph [ref=e192]: 모든 테스트 케이스를 통과한 문제만 여기에 기록됩니다.
+        - text: +
+  - status
