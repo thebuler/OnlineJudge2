@@ -1,0 +1,12 @@
+- generic [active] [ref=e1]:
+  - region "학생 로그인" [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: STUDENT SPACE
+      - heading "학생 로그인" [level=2] [ref=e6]
+      - paragraph [ref=e7]: Google 계정으로 로그인하고 오늘의 문제를 풀어보세요.
+      - button "Google 계정으로 계속하기" [ref=e8] [cursor=pointer]:
+        - img [ref=e9]
+        - generic [ref=e14]: Google 계정으로 계속하기
+      - paragraph [ref=e15]: 로그인과 세션은 Supabase Auth가 관리합니다. Google 계정 제공자 설정이 필요합니다.
+  - text: +
+  - status
