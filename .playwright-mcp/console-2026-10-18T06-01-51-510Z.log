@@ -1,0 +1,8 @@
+[      58ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   12668ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://ruyia6tg3f2q4vzs.jitda.io/api/tutor/hint:0
+[   36956ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[   98519ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://ruyia6tg3f2q4vzs.jitda.io/api/tutor/hint:0
+[  111452ms] [ERROR] Failed to load resource: the server responded with a status of 502 () @ https://ruyia6tg3f2q4vzs.jitda.io/api/tutor/problem:0
+[  144055ms] [LOG] [vite] server connection lost. Polling for restart... @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
+[  144066ms] [ERROR] WebSocket connection to 'wss://ruyia6tg3f2q4vzs.jitda.io/' failed: Error during WebSocket handshake: Unexpected response code: 503 @ https://ruyia6tg3f2q4vzs.jitda.io/@vite/client:1034
+[  145638ms] [INFO] [preview-bridge] v1.1.0 @ https://ruyia6tg3f2q4vzs.jitda.io/__preview-bridge.js:1
