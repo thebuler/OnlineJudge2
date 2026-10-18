@@ -7,11 +7,14 @@ import { defineConfig, loadEnv } from "vite";
 const csvPath = fileURLToPath(new URL("./.private/students.csv", import.meta.url));
 const legacyCsvPath = fileURLToPath(new URL("./data/students.csv", import.meta.url));
 const tutorSettingsPath = fileURLToPath(new URL("./.private/tutor-settings.csv", import.meta.url));
+const submissionsPath = fileURLToPath(new URL("./.private/submissions.csv", import.meta.url));
 const csvHeader = "id,salt,password_hash,role,created_at\n";
+const submissionsHeader = "student_id,problem_id,title,topic,level,status,passed,total,submitted_at\n";
 const sessionLifetime = 12 * 60 * 60 * 1000;
 const sessions = new Map();
 const aiRequests = new Map();
 let accountWriteQueue = Promise.resolve();
+let submissionWriteQueue = Promise.resolve();
 let tutorEnabled = true;
 
 async function migrateAccountCsv() {
@@ -209,6 +212,108 @@ async function readAccounts() {
   }
 }
 
+async function seedDemoStudents(password) {
+  if (!password) return;
+  if (password.length < 8 || password.length > 128) throw new Error("체험 학생 공통 비밀번호는 8~128자로 설정해 주세요.");
+  const demoIds = Array.from({ length: 5 }, (_, index) => `demo-student-${String(index + 1).padStart(2, "0")}`);
+  await serializeAccountWrite(async () => {
+    const accounts = await readAccounts();
+    const missing = demoIds.filter(id => !accounts.some(account => account.id === id));
+    if (!missing.length) return;
+    const rows = await Promise.all(missing.map(async id => {
+      const salt = randomBytes(16).toString("hex");
+      const passwordHash = await derivePassword(password, salt);
+      return `${id},${salt},${passwordHash},student,${new Date().toISOString()}\n`;
+    }));
+    await appendFile(csvPath, rows.join(""), { encoding: "utf8", mode: 0o600 });
+    await chmod(csvPath, 0o600);
+  });
+}
+
+async function prepareSubmissionStorage() {
+  try {
+    await readFile(submissionsPath);
+    await chmod(submissionsPath, 0o600);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    await writeFile(submissionsPath, submissionsHeader, { flag: "wx", mode: 0o600 });
+  }
+}
+
+async function readSubmissions() {
+  try {
+    return (await readFile(submissionsPath, "utf8")).split(/\r?\n/).slice(1).filter(Boolean).map(line => {
+      const [studentId, problemId, title, topic, level, status, passed, total, submittedAt] = line.split(",");
+      return { studentId, problemId, title, topic, level, status, passed: Number(passed), total: Number(total), submittedAt };
+    });
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    await prepareSubmissionStorage();
+    return [];
+  }
+}
+
+function csvField(value, limit) {
+  return String(value ?? "").replace(/[\r\n,"]/g, " ").trim().slice(0, limit);
+}
+
+function serializeSubmissionWrite(operation) {
+  const result = submissionWriteQueue.then(operation, operation);
+  submissionWriteQueue = result.catch(() => {});
+  return result;
+}
+
+async function buildTeacherDashboard() {
+  const [accounts, submissions] = await Promise.all([readAccounts(), readSubmissions()]);
+  const students = accounts.filter(account => account.role === "student");
+  const byStudent = new Map(students.map(student => [student.id, []]));
+  for (const submission of submissions) byStudent.get(submission.studentId)?.push(submission);
+
+  const studentRows = students.map(student => {
+    const records = (byStudent.get(student.id) || []).sort((left, right) => right.submittedAt.localeCompare(left.submittedAt));
+    const solvedCount = new Set(records.filter(item => item.status === "accepted").map(item => item.problemId)).size;
+    const totalProblems = 5 + new Set(records.filter(item => item.problemId.startsWith("ai-")).map(item => item.problemId)).size;
+    const latest = records[0];
+    return {
+      id: student.id,
+      solvedCount,
+      totalProblems,
+      progress: Math.min(100, Math.round(solvedCount / totalProblems * 100)),
+      lastActive: latest?.submittedAt || null,
+      currentTopic: latest?.topic || "미시작",
+      status: !latest ? "미시작" : latest.status === "accepted" ? "순조로움" : "도움 필요"
+    };
+  }).sort((left, right) => (right.lastActive || "").localeCompare(left.lastActive || ""));
+
+  const today = new Date().toISOString().slice(0, 10);
+  const todaysSubmissions = submissions.filter(item => item.submittedAt.startsWith(today));
+  const needsHelp = studentRows.filter(student => student.status === "도움 필요").length;
+  const attemptCounts = new Map();
+  for (const item of submissions) {
+    const key = `${item.studentId}\n${item.problemId}`;
+    attemptCounts.set(key, (attemptCounts.get(key) || 0) + 1);
+  }
+  const recentSubmissions = submissions
+    .slice()
+    .sort((left, right) => right.submittedAt.localeCompare(left.submittedAt))
+    .slice(0, 30)
+    .map(item => ({
+      ...item,
+      attempts: attemptCounts.get(`${item.studentId}\n${item.problemId}`) || 1
+    }));
+
+  return {
+    stats: {
+      studentCount: students.length,
+      activeToday: new Set(todaysSubmissions.map(item => item.studentId)).size,
+      todaySubmissions: todaysSubmissions.length,
+      needsHelp
+    },
+    students: studentRows,
+    recentSubmissions
+  };
+}
+
 function serializeAccountWrite(operation) {
   const result = accountWriteQueue.then(operation, operation);
   accountWriteQueue = result.catch(() => {});
@@ -266,11 +371,13 @@ function createSession(response, studentId, role) {
   return { user: { id: studentId, role } };
 }
 
-function csvAuthPlugin({ solarApiKey, teacherInviteCode }) {
+function csvAuthPlugin({ solarApiKey, teacherInviteCode, demoStudentPassword }) {
   return {
     name: "codeon-csv-auth",
     async configureServer(server) {
       await prepareCsvStorage();
+      await seedDemoStudents(demoStudentPassword);
+      await prepareSubmissionStorage();
       server.middlewares.use((request, response, next) => {
         let pathname = "";
         try {
@@ -286,9 +393,48 @@ function csvAuthPlugin({ solarApiKey, teacherInviteCode }) {
       });
       server.middlewares.use((request, response, next) => {
         const pathname = new URL(request.url || "/", "http://localhost").pathname;
-        if (!pathname.startsWith("/api/auth/") && !pathname.startsWith("/api/tutor/")) return next();
+        if (!pathname.startsWith("/api/auth/") && !pathname.startsWith("/api/tutor/") && !pathname.startsWith("/api/teacher/") && pathname !== "/api/submissions") return next();
 
         (async () => {
+          if (pathname === "/api/submissions" && request.method === "POST") {
+            const session = readSession(request);
+            if (!session) return sendJson(response, 401, { error: "로그인이 필요합니다." });
+            if (session.role !== "student") return sendJson(response, 403, { error: "학생 계정만 제출 기록을 남길 수 있습니다." });
+            const body = await readJson(request);
+            const topics = ["입출력", "조건문", "반복문", "리스트"];
+            const levels = ["쉬움", "보통", "도전"];
+            const statuses = ["accepted", "wrong_answer", "runtime_error", "time_limit"];
+            const problemId = String(body.problemId || "");
+            const passed = Number(body.passed);
+            const total = Number(body.total);
+            if (!/^(10[1-5]|ai-[a-z0-9-]{1,80})$/.test(problemId) || !topics.includes(body.topic) || !levels.includes(body.level) || !statuses.includes(body.status) || !Number.isInteger(passed) || !Number.isInteger(total) || total < 1 || total > 10 || passed < 0 || passed > total) {
+              return sendJson(response, 400, { error: "제출 기록 형식이 올바르지 않습니다." });
+            }
+            const row = [
+              session.studentId,
+              problemId,
+              csvField(body.title, 100),
+              body.topic,
+              body.level,
+              body.status,
+              passed,
+              total,
+              new Date().toISOString()
+            ].join(",") + "\n";
+            await serializeSubmissionWrite(async () => {
+              await appendFile(submissionsPath, row, { encoding: "utf8", mode: 0o600 });
+              await chmod(submissionsPath, 0o600);
+            });
+            return sendJson(response, 201, { recorded: true });
+          }
+
+          if (pathname === "/api/teacher/dashboard" && request.method === "GET") {
+            const session = readSession(request);
+            if (!session) return sendJson(response, 401, { error: "로그인이 필요합니다." });
+            if (session.role !== "teacher") return sendJson(response, 403, { error: "교사 계정만 학생 데이터를 볼 수 있습니다." });
+            return sendJson(response, 200, await buildTeacherDashboard());
+          }
+
           if (pathname === "/api/auth/me" && request.method === "GET") {
             const session = readSession(request);
             return sendJson(response, 200, { user: session ? { id: session.studentId, role: session.role } : null });
@@ -425,7 +571,8 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [csvAuthPlugin({
       solarApiKey: serverSecrets.SOLAR_API_KEY,
-      teacherInviteCode: serverSecrets.TEACHER_INVITE_CODE
+      teacherInviteCode: serverSecrets.TEACHER_INVITE_CODE,
+      demoStudentPassword: serverSecrets.DEMO_STUDENT_PASSWORD
     })]
   };
 });

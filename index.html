@@ -453,20 +453,20 @@
           <div class="section-heading"><div><div class="eyebrow">PYTHON 기초 · 입출력</div><h2 id="problemHeading">문제 목록</h2></div><button class="text-button" id="backHome">나의 학습으로</button></div>
           <div class="problem-tools" aria-label="난이도 필터"><button class="filter-chip active" data-filter="all">전체</button><button class="filter-chip" data-filter="쉬움">쉬움</button><button class="filter-chip" data-filter="보통">보통</button><button class="filter-chip" data-filter="도전">도전</button></div>
           <div class="problem-list" id="allProblemList"></div>
-          <p class="footer-note">문제와 학습 기록은 화면 예시를 위한 샘플 데이터입니다.</p>
+          <p class="footer-note">문제 목록은 기본 학습 자료이며, 제출 결과는 서버에 기록되어 교사 대시보드에 표시됩니다.</p>
         </section>
 
         <section class="view" id="teacherView" aria-labelledby="teacherHeadingTitle">
           <div class="teacher-heading">
-            <div><div class="eyebrow">CLASSROOM · 2학년 1반</div><h1 id="teacherHeadingTitle">수업의 흐름을 한눈에</h1><p class="welcome-sub">학생들의 문제 풀이와 제출 결과를 확인해 보세요.</p></div>
+            <div><div class="eyebrow">CLASSROOM · STUDENT ACTIVITY</div><h1 id="teacherHeadingTitle">학생들의 학습 흐름</h1><p class="welcome-sub">가입한 학생과 실제 코드 제출 기록을 확인해 보세요.</p></div>
             <div class="tutor-control"><div><strong>AI 튜터 힌트</strong><small id="tutorToggleText">학생에게 개념 힌트를 보여줍니다</small></div><button class="tutor-switch" id="tutorToggle" type="button" role="switch" aria-checked="true" aria-label="AI 튜터 힌트 끄기"></button></div>
           </div>
 
           <section class="teacher-stats" aria-label="학급 요약">
-            <article class="teacher-stat"><div class="teacher-stat-label">등록 학생</div><div class="teacher-stat-value">28<small>명</small></div><div class="teacher-stat-note">2학년 1반</div></article>
-            <article class="teacher-stat"><div class="teacher-stat-label">오늘 학습한 학생</div><div class="teacher-stat-value">21<small>/ 28명</small></div><div class="teacher-stat-note">지난 수업보다 3명 더 참여</div></article>
-            <article class="teacher-stat"><div class="teacher-stat-label">오늘 제출</div><div class="teacher-stat-value">64<small>건</small></div><div class="teacher-stat-note">문제 5개에서 제출 발생</div></article>
-            <article class="teacher-stat"><div class="teacher-stat-label">확인이 필요한 제출</div><div class="teacher-stat-value">7<small>건</small></div><div class="teacher-stat-note" style="color: var(--amber)">오답 또는 재도전 대기</div></article>
+            <article class="teacher-stat"><div class="teacher-stat-label">등록 학생</div><div class="teacher-stat-value"><span id="teacherStudentCount">0</span><small>명</small></div><div class="teacher-stat-note">CSV 계정 기준</div></article>
+            <article class="teacher-stat"><div class="teacher-stat-label">오늘 학습한 학생</div><div class="teacher-stat-value"><span id="teacherActiveCount">0</span><small>명</small></div><div class="teacher-stat-note">오늘 제출 기록이 있는 학생</div></article>
+            <article class="teacher-stat"><div class="teacher-stat-label">오늘 제출</div><div class="teacher-stat-value"><span id="teacherSubmissionCount">0</span><small>건</small></div><div class="teacher-stat-note">서버에 기록된 제출</div></article>
+            <article class="teacher-stat"><div class="teacher-stat-label">도움이 필요한 학생</div><div class="teacher-stat-value"><span id="teacherNeedsHelp">0</span><small>명</small></div><div class="teacher-stat-note" style="color: var(--amber)">최근 제출이 통과되지 않은 학생</div></article>
           </section>
 
           <div class="teacher-tabs" role="tablist" aria-label="대시보드 보기">
@@ -475,26 +475,15 @@
           </div>
 
           <section class="teacher-panel" id="progressPanel" role="tabpanel" aria-labelledby="progressTab">
-            <div class="teacher-panel-head"><div><h2>학생별 학습 현황</h2><p>이번 주 문제 풀이 진행률</p></div><input class="teacher-search" id="teacherSearch" type="search" placeholder="학생 이름 검색" aria-label="학생 이름 검색"></div>
-            <div class="table-scroll"><table class="teacher-table"><thead><tr><th>학생</th><th>푼 문제</th><th>진행률</th><th>최근 학습</th><th>현재 단원</th><th>상태</th></tr></thead><tbody id="progressRows">
-              <tr data-search="김민서 새솔중 조건문"><td><div class="student-cell"><span class="student-mini-avatar">김</span>김민서</div></td><td>9 / 12</td><td><div class="progress-cell"><span>75%</span><span class="progress-track"><span class="progress-fill" style="display:block;width:75%"></span></span></div></td><td>방금 전</td><td>조건문</td><td><span class="table-status">순조로움</span></td></tr>
-              <tr data-search="박지호 새솔중 반복문"><td><div class="student-cell"><span class="student-mini-avatar">박</span>박지호</div></td><td>7 / 12</td><td><div class="progress-cell"><span>58%</span><span class="progress-track"><span class="progress-fill" style="display:block;width:58%"></span></span></div></td><td>3분 전</td><td>반복문</td><td><span class="table-status review">도움 필요</span></td></tr>
-              <tr data-search="이서윤 새솔중 입출력"><td><div class="student-cell"><span class="student-mini-avatar">이</span>이서윤</div></td><td>11 / 12</td><td><div class="progress-cell"><span>92%</span><span class="progress-track"><span class="progress-fill" style="display:block;width:92%"></span></span></div></td><td>8분 전</td><td>입출력</td><td><span class="table-status">순조로움</span></td></tr>
-              <tr data-search="정도윤 새솔중 리스트"><td><div class="student-cell"><span class="student-mini-avatar">정</span>정도윤</div></td><td>4 / 12</td><td><div class="progress-cell"><span>33%</span><span class="progress-track"><span class="progress-fill" style="display:block;width:33%"></span></span></div></td><td>어제</td><td>리스트</td><td><span class="table-status error">미접속</span></td></tr>
-            </tbody></table></div>
+            <div class="teacher-panel-head"><div><h2>학생별 학습 현황</h2><p>테스트 케이스를 통과한 문제 수 기준</p></div><div class="teacher-result-tools"><input class="teacher-search" id="teacherSearch" type="search" placeholder="학생 아이디 검색" aria-label="학생 아이디 검색"><button class="small-button" id="refreshTeacher" type="button">새로고침</button></div></div>
+            <div class="table-scroll"><table class="teacher-table"><thead><tr><th>학생 아이디</th><th>푼 문제</th><th>진행률</th><th>최근 제출</th><th>최근 단원</th><th>상태</th></tr></thead><tbody id="progressRows"></tbody></table></div>
           </section>
 
           <section class="teacher-panel" id="resultsPanel" role="tabpanel" aria-labelledby="resultsTab" hidden>
-            <div class="teacher-panel-head"><div><h2>최근 제출 결과</h2><p>학생 코드 제출 샘플 기록</p></div><div class="teacher-result-tools"><input class="teacher-search" id="resultSearch" type="search" placeholder="학생 또는 문제 검색" aria-label="제출 학생이나 문제 검색"><div class="result-filters" aria-label="제출 결과 필터"><button class="result-filter active" data-result-filter="all">전체</button><button class="result-filter" data-result-filter="pass">통과</button><button class="result-filter" data-result-filter="wrong">오답</button><button class="result-filter" data-result-filter="review">재도전</button></div></div></div>
-            <div class="table-scroll"><table class="teacher-table"><thead><tr><th>학생</th><th>문제</th><th>제출 시각</th><th>결과</th><th>시도</th></tr></thead><tbody id="resultRows">
-              <tr data-search="김민서 두 수의 합 구하기" data-status="pass"><td><div class="student-cell"><span class="student-mini-avatar">김</span>김민서</div></td><td>두 수의 합 구하기</td><td>방금 전</td><td><span class="table-status">통과</span></td><td>1회</td></tr>
-              <tr data-search="박지호 별 계단 만들기" data-status="wrong"><td><div class="student-cell"><span class="student-mini-avatar">박</span>박지호</div></td><td>별 계단 만들기</td><td>3분 전</td><td><span class="table-status error">오답</span></td><td>2회</td></tr>
-              <tr data-search="이서윤 짝수일까요" data-status="pass"><td><div class="student-cell"><span class="student-mini-avatar">이</span>이서윤</div></td><td>짝수일까요?</td><td>8분 전</td><td><span class="table-status">통과</span></td><td>1회</td></tr>
-              <tr data-search="최유진 가장 큰 수 찾기" data-status="review"><td><div class="student-cell"><span class="student-mini-avatar">최</span>최유진</div></td><td>가장 큰 수 찾기</td><td>12분 전</td><td><span class="table-status review">재도전</span></td><td>3회</td></tr>
-              <tr data-search="정도윤 구구단 한 단 출력하기" data-status="pass"><td><div class="student-cell"><span class="student-mini-avatar">정</span>정도윤</div></td><td>구구단 한 단 출력하기</td><td>18분 전</td><td><span class="table-status">통과</span></td><td>2회</td></tr>
-            </tbody></table></div>
+            <div class="teacher-panel-head"><div><h2>최근 제출 결과</h2><p>가장 최근 서버 기록 30건</p></div><div class="teacher-result-tools"><input class="teacher-search" id="resultSearch" type="search" placeholder="학생 또는 문제 검색" aria-label="제출 학생이나 문제 검색"><div class="result-filters" aria-label="제출 결과 필터"><button class="result-filter active" data-result-filter="all">전체</button><button class="result-filter" data-result-filter="pass">통과</button><button class="result-filter" data-result-filter="wrong">오답</button><button class="result-filter" data-result-filter="review">재도전</button></div></div></div>
+            <div class="table-scroll"><table class="teacher-table"><thead><tr><th>학생 아이디</th><th>문제</th><th>제출 시각</th><th>결과</th><th>시도</th></tr></thead><tbody id="resultRows"></tbody></table></div>
           </section>
-          <p class="teacher-footnote">대시보드의 학생 정보와 제출 기록은 화면 체험용 샘플 데이터입니다. 로그인·실시간 연동은 아직 연결되지 않았습니다.</p>
+          <p class="teacher-footnote">학생 목록은 CSV 계정에서, 제출 결과는 서버 제출 기록에서 불러옵니다. 대시보드는 15초마다 새로고침됩니다.</p>
         </section>
 
         <section class="view" id="solveView" aria-labelledby="solveTitle">
@@ -544,6 +533,9 @@
     let currentUser = null;
     let activeJudgeWorker = null;
     let judgeTimeoutId = null;
+    let teacherRefreshTimer = null;
+    let teacherDashboardLoading = false;
+    let teacherDashboardRequest = 0;
     let tutorEnabled = true;
     let tutorVisible = false;
     let tutorRequestSequence = 0;
@@ -655,6 +647,12 @@
       $("#profileName").textContent = viewName === "teacher" ? `${displayName} 선생님` : displayName;
       $("#profileMeta").textContent = viewName === "teacher" ? "교사 계정 · 새솔중학교" : (currentUser?.email || "학생 계정");
       if (viewName !== "teacher") $("#welcomeTitle").textContent = `${displayName}님, 오늘도 한 문제씩!`;
+      clearInterval(teacherRefreshTimer);
+      teacherRefreshTimer = null;
+      if (viewName === "teacher") {
+        loadTeacherDashboard();
+        teacherRefreshTimer = setInterval(loadTeacherDashboard, 15000);
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -720,12 +718,138 @@
     function filterTeacherRows() {
       const studentQuery = $("#teacherSearch").value.trim().toLowerCase();
       const resultQuery = $("#resultSearch").value.trim().toLowerCase();
-      $$("#progressRows tr").forEach(row => { row.hidden = !row.dataset.search.toLowerCase().includes(studentQuery); });
+      $$("#progressRows tr").forEach(row => { row.hidden = !(row.dataset.search || "").toLowerCase().includes(studentQuery); });
       $$("#resultRows tr").forEach(row => {
-        const matchesSearch = row.dataset.search.toLowerCase().includes(resultQuery);
+        const matchesSearch = (row.dataset.search || "").toLowerCase().includes(resultQuery);
         const matchesStatus = activeResultFilter === "all" || row.dataset.status === activeResultFilter;
         row.hidden = !matchesSearch || !matchesStatus;
       });
+    }
+
+    function formatActivityTime(timestamp) {
+      if (!timestamp) return "아직 제출 없음";
+      const date = new Date(timestamp);
+      return date.toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" }) === new Date().toLocaleDateString("ko-KR", { month: "numeric", day: "numeric" })
+        ? `오늘 ${new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit" }).format(date)}`
+        : new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric" }).format(date);
+    }
+
+    function appendCell(row, text) {
+      const cell = document.createElement("td");
+      cell.textContent = text;
+      row.append(cell);
+      return cell;
+    }
+
+    function loadTeacherDashboard() {
+      if (teacherDashboardLoading || currentUser?.app_metadata?.role !== "teacher") return;
+      teacherDashboardLoading = true;
+      const requestId = ++teacherDashboardRequest;
+      fetch("/api/teacher/dashboard", { credentials: "same-origin", cache: "no-store" })
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || "대시보드 데이터를 불러오지 못했습니다.");
+          return data;
+        })
+        .then(data => {
+          if (requestId !== teacherDashboardRequest || currentUser?.app_metadata?.role !== "teacher") return;
+          $("#teacherStudentCount").textContent = data.stats.studentCount;
+          $("#teacherActiveCount").textContent = data.stats.activeToday;
+          $("#teacherSubmissionCount").textContent = data.stats.todaySubmissions;
+          $("#teacherNeedsHelp").textContent = data.stats.needsHelp;
+
+          const progressRows = data.students.map(student => {
+            const row = document.createElement("tr");
+            row.dataset.search = `${student.id} ${student.currentTopic}`.toLowerCase();
+            const studentCell = document.createElement("td");
+            const studentInfo = document.createElement("div");
+            studentInfo.className = "student-cell";
+            const avatar = document.createElement("span");
+            avatar.className = "student-mini-avatar";
+            avatar.textContent = student.id.slice(0, 1).toUpperCase();
+            studentInfo.append(avatar, document.createTextNode(student.id));
+            studentCell.append(studentInfo);
+            row.append(studentCell);
+            appendCell(row, `${student.solvedCount} / ${student.totalProblems}`);
+            const progressCell = document.createElement("td");
+            const progress = document.createElement("div");
+            progress.className = "progress-cell";
+            const percentage = document.createElement("span");
+            percentage.textContent = `${student.progress}%`;
+            const track = document.createElement("span");
+            track.className = "progress-track";
+            const fill = document.createElement("span");
+            fill.className = "progress-fill";
+            fill.style.display = "block";
+            fill.style.width = `${student.progress}%`;
+            track.append(fill);
+            progress.append(percentage, track);
+            progressCell.append(progress);
+            row.append(progressCell);
+            appendCell(row, formatActivityTime(student.lastActive));
+            appendCell(row, student.currentTopic);
+            const statusCell = document.createElement("td");
+            const status = document.createElement("span");
+            status.className = `table-status ${student.status === "도움 필요" ? "review" : student.status === "미시작" ? "error" : ""}`;
+            status.textContent = student.status;
+            statusCell.append(status);
+            row.append(statusCell);
+            return row;
+          });
+          if (!progressRows.length) {
+            const row = document.createElement("tr");
+            row.dataset.search = "";
+            appendCell(row, "가입한 학생이 없습니다.").colSpan = 6;
+            progressRows.push(row);
+          }
+          $("#progressRows").replaceChildren(...progressRows);
+
+          const resultRows = data.recentSubmissions.map(submission => {
+            const row = document.createElement("tr");
+            const searchText = `${submission.studentId} ${submission.title} ${submission.topic}`.toLowerCase();
+            row.dataset.search = searchText;
+            const statusMap = {
+              accepted: ["통과", "pass", "pass"],
+              wrong_answer: ["오답", "wrong", "error"],
+              runtime_error: ["실행 오류", "review", "error"],
+              time_limit: ["시간 초과", "review", "review"]
+            };
+            const [label, statusFilter, statusClass] = statusMap[submission.status] || ["기타", "review", "review"];
+            row.dataset.status = statusFilter;
+            const studentCell = document.createElement("td");
+            const studentInfo = document.createElement("div");
+            studentInfo.className = "student-cell";
+            const avatar = document.createElement("span");
+            avatar.className = "student-mini-avatar";
+            avatar.textContent = submission.studentId.slice(0, 1).toUpperCase();
+            studentInfo.append(avatar, document.createTextNode(submission.studentId));
+            studentCell.append(studentInfo);
+            row.append(studentCell);
+            appendCell(row, submission.title);
+            appendCell(row, formatActivityTime(submission.submittedAt));
+            const resultCell = document.createElement("td");
+            const result = document.createElement("span");
+            result.className = `table-status ${statusClass}`;
+            result.textContent = label;
+            resultCell.append(result);
+            row.append(resultCell);
+            appendCell(row, `${submission.attempts}회`);
+            return row;
+          });
+          if (!resultRows.length) {
+            const row = document.createElement("tr");
+            row.dataset.search = "";
+            row.dataset.status = "";
+            appendCell(row, "아직 제출 기록이 없습니다.").colSpan = 5;
+            resultRows.push(row);
+          }
+          $("#resultRows").replaceChildren(...resultRows);
+          filterTeacherRows();
+        })
+        .catch(() => toast("교사 대시보드 데이터를 불러오지 못했어요."))
+        .finally(() => {
+          if (requestId === teacherDashboardRequest) teacherDashboardLoading = false;
+        });
     }
 
     function openProblem(id) {
@@ -894,9 +1018,32 @@
       panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
+    async function recordSubmission(result, passed) {
+      try {
+        const response = await fetch("/api/submissions", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            problemId: currentProblem.id,
+            title: currentProblem.title,
+            topic: currentProblem.topic,
+            level: currentProblem.level,
+            status: result.status,
+            passed,
+            total: result.total
+          })
+        });
+        if (!response.ok) toast("교사 대시보드에 제출 기록을 저장하지 못했어요.");
+      } catch {
+        toast("교사 대시보드에 제출 기록을 저장하지 못했어요.");
+      }
+    }
+
     function renderJudgeResult(result) {
       finishJudge();
       const passedCount = result.results.filter(testCase => testCase.passed).length;
+      recordSubmission(result, passedCount);
       const runtimeError = result.results.find(testCase => testCase.error);
       const kind = runtimeError ? "runtime-error" : result.status === "accepted" ? "accepted" : "rejected";
       const title = runtimeError ? "실행 오류" : result.status === "accepted" ? "정답 · 모든 테스트 통과" : "오답 · 일부 테스트 실패";
@@ -978,6 +1125,7 @@
             showJudgeState("time-limit", "시간 초과", "실행이 3초를 넘어 자동으로 중단됐습니다.");
             recentTutorAttempt = { topic: currentProblem.topic, level: currentProblem.level, status: "time_limit" };
             localStorage.setItem(recentTutorStorageKey(), JSON.stringify(recentTutorAttempt));
+            recordSubmission({ status: "time_limit", total: currentProblem.testCases.length }, 0);
             requestPassiveHint({ status: "time_limit", results: [] });
           }, 3000);
           return;
@@ -1027,6 +1175,16 @@
       const viewName = { homeView: "home", problemView: "problems", solveView: "solve", teacherView: "teacher" }[currentView] || "home";
       currentUser = event.detail?.user || null;
       if (!currentUser) {
+        clearInterval(teacherRefreshTimer);
+        teacherRefreshTimer = null;
+        teacherDashboardRequest++;
+        teacherDashboardLoading = false;
+        $("#progressRows").replaceChildren();
+        $("#resultRows").replaceChildren();
+        $("#teacherStudentCount").textContent = "0";
+        $("#teacherActiveCount").textContent = "0";
+        $("#teacherSubmissionCount").textContent = "0";
+        $("#teacherNeedsHelp").textContent = "0";
         restoreGeneratedProblems(null);
         solvedProblemIds = new Set();
         recentTutorAttempt = null;
@@ -1115,6 +1273,7 @@
     $("#searchInput").addEventListener("input", renderProblems);
     $("#teacherSearch").addEventListener("input", filterTeacherRows);
     $("#resultSearch").addEventListener("input", filterTeacherRows);
+    $("#refreshTeacher").addEventListener("click", loadTeacherDashboard);
     $("#tutorToggle").addEventListener("click", async () => {
       const toggle = $("#tutorToggle");
       toggle.disabled = true;
