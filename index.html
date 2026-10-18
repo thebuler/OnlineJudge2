@@ -53,12 +53,18 @@
     .login-card { width: min(390px, 100%); }
     .login-card h2 { margin: 0; font-size: 27px; letter-spacing: -.9px; }
     .login-description { margin: 9px 0 27px; color: var(--muted); font-size: 13px; line-height: 1.7; }
-    .google-login { display: flex; width: 100%; min-height: 49px; align-items: center; justify-content: center; gap: 11px; margin-top: 7px; border: 1px solid #dadce0; border-radius: 8px; background: #fff; color: #3c4043; cursor: pointer; font-size: 13px; font-weight: 650; transition: background .18s, box-shadow .18s; }
-    .google-login:hover { background: #f8faff; box-shadow: 0 2px 5px #2021241a; }
-    .google-login:disabled { cursor: not-allowed; opacity: .55; }
-    .google-login svg { width: 19px; height: 19px; flex: none; }
+    .login-field { display: grid; gap: 8px; margin-top: 16px; }
+    .login-field label { font-size: 12px; font-weight: 700; }
+    .login-field input { width: 100%; height: 46px; border: 1px solid #dedfe8; border-radius: 9px; background: #fff; padding: 0 13px; color: var(--ink); font-size: 14px; }
+    .login-field input::placeholder { color: #a4a6b4; }
+    .login-submit { width: 100%; min-height: 47px; margin-top: 21px; border: 0; border-radius: 9px; background: var(--purple); color: white; cursor: pointer; font-size: 13px; font-weight: 750; transition: background .18s, transform .18s; }
+    .login-submit:hover { transform: translateY(-1px); background: var(--purple-dark); }
     .login-error { margin: 12px 0 0; border-radius: 8px; background: #fff0f0; padding: 10px 12px; color: #ae4141; font-size: 12px; line-height: 1.5; }
-    .login-footnote { margin-top: 19px; color: #999cab; font-size: 10px; line-height: 1.7; text-align: center; }
+    .demo-login { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 17px; border: 1px solid #ececf2; border-radius: 9px; background: #fafafd; padding: 12px; }
+    .demo-login-label { color: #777b91; font-size: 11px; line-height: 1.6; }
+    .demo-login-label strong { color: #45495f; font-weight: 700; }
+    .demo-fill { min-height: 34px; flex: none; border: 1px solid #dddafe; border-radius: 7px; background: white; padding: 0 9px; color: var(--purple-dark); cursor: pointer; font-size: 10px; font-weight: 700; }
+    .login-footnote { margin-top: 17px; color: #999cab; font-size: 10px; line-height: 1.7; text-align: center; }
     .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 5; display: flex; width: 238px; flex-direction: column; border-right: 1px solid var(--line); background: var(--paper); padding: 28px 16px 20px; }
     .brand { display: flex; align-items: center; gap: 10px; margin: 0 10px 37px; color: var(--ink); font-size: 21px; font-weight: 800; letter-spacing: -.8px; }
     .brand-mark { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 11px; background: var(--purple); color: white; }
@@ -326,10 +332,15 @@
       <div class="login-story-foot">새솔중학교 · 파이썬 문제 풀이 공간</div>
     </div>
     <div class="login-panel"><div class="login-card">
-      <div class="eyebrow">STUDENT SPACE</div><h2 id="loginTitle">학생 로그인</h2><p class="login-description">Google 계정으로 로그인하고 오늘의 문제를 풀어보세요.</p>
-      <button class="google-login" id="googleLogin" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.61l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.71 7.18l7.2 5.59c4.2-3.88 6.55-9.6 6.55-17.24z"/><path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.93 23.93 0 0 0 0 24c0 3.87.93 7.53 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.9-5.79l-7.2-5.59c-2 1.35-4.56 2.16-8.7 2.16-6.27 0-11.58-4.22-13.47-9.92l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Google 계정으로 계속하기</span></button>
-      <p class="login-error" id="loginError" role="alert" hidden></p>
-      <p class="login-footnote">로그인과 세션은 Supabase Auth가 관리합니다. Google 계정 제공자 설정이 필요합니다.</p>
+      <div class="eyebrow">STUDENT SPACE</div><h2 id="loginTitle">학생 로그인</h2><p class="login-description">학번과 비밀번호를 입력해 문제 풀이를 시작하세요.</p>
+      <form id="loginForm" novalidate>
+        <div class="login-field"><label for="studentId">학번</label><input id="studentId" name="username" type="text" placeholder="학번을 입력하세요" autocomplete="username" required></div>
+        <div class="login-field"><label for="studentPassword">비밀번호</label><input id="studentPassword" name="password" type="password" placeholder="비밀번호를 입력하세요" autocomplete="current-password" required></div>
+        <button class="login-submit" type="submit">로그인</button>
+        <p class="login-error" id="loginError" role="alert" hidden>학번 또는 비밀번호를 다시 확인해 주세요.</p>
+      </form>
+      <div class="demo-login"><div class="demo-login-label">체험용 계정<br><strong>student01 / python123</strong></div><button class="demo-fill" id="fillDemo" type="button">계정 입력</button></div>
+      <p class="login-footnote">이 로그인은 화면 체험용으로, 입력값은 이 웹페이지 안에서만 확인합니다. 실제 계정 보안 기능은 제공하지 않습니다.</p>
     </div></div>
   </section>
 
@@ -522,6 +533,17 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    function setDemoSession(signedIn) {
+      const user = signedIn ? {
+        email: "student01@demo.codeon",
+        user_metadata: { full_name: "김민서" },
+        app_metadata: { role: "student" }
+      } : null;
+      if (signedIn) sessionStorage.setItem("codeon-demo-student", "student01");
+      else sessionStorage.removeItem("codeon-demo-student");
+      window.dispatchEvent(new CustomEvent("codeon:auth", { detail: { user } }));
+    }
+
     function syncTutorSetting() {
       const toggle = $("#tutorToggle");
       toggle.setAttribute("aria-checked", String(tutorEnabled));
@@ -618,6 +640,27 @@
       showView(wasSignedIn ? viewName : "home");
     });
     window.addEventListener("codeon:notice", event => toast(event.detail?.message || "요청을 완료하지 못했어요."));
+    $("#fillDemo").addEventListener("click", () => {
+      $("#studentId").value = "student01";
+      $("#studentPassword").value = "python123";
+      $("#loginError").hidden = true;
+      $("#studentPassword").focus();
+    });
+    $("#loginForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const valid = $("#studentId").value.trim() === "student01" && $("#studentPassword").value === "python123";
+      if (!valid) {
+        $("#loginError").textContent = "학번 또는 비밀번호를 다시 확인해 주세요.";
+        $("#loginError").hidden = false;
+        return;
+      }
+      setDemoSession(true);
+    });
+    $("#logoutButton").addEventListener("click", () => {
+      $("#studentPassword").value = "";
+      setDemoSession(false);
+      $("#studentId").focus();
+    });
     $("#searchInput").addEventListener("input", renderProblems);
     $("#teacherSearch").addEventListener("input", filterTeacherRows);
     $("#resultSearch").addEventListener("input", filterTeacherRows);
@@ -662,7 +705,7 @@
     syncTutorSetting();
     filterTeacherRows();
     $("#todayLabel").textContent = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long" }).format(new Date());
+    if (sessionStorage.getItem("codeon-demo-student") === "student01") setDemoSession(true);
   </script>
-  <script type="module" src="/src/auth.js"></script>
 </body>
 </html>
